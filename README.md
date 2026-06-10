@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Senja Painters Website
 
-## Getting Started
+Norwegian-first Next.js website for Senja Painters.
 
-First, run the development server:
+## Development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Testing
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+bun run test
+bun run test:ci
+bun run test:watch
+bun run test:e2e
+```
 
-## Learn More
+`bun run test` runs Jest with React Testing Library for component and application behavior. `bun run test:ci` runs the usual non-E2E verification path: Jest, lint, and build. `bun run test:e2e` is intentionally separate; it starts a local Next.js dev server when needed and runs the Bruno HTTP E2E collection in `tests/e2e/bruno`.
 
-To learn more about Next.js, take a look at the following resources:
+To run Bruno against an already-running server:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+BASE_URL=http://127.0.0.1:3000 bun run test:e2e
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Or run the collection directly when a server is already available at the local environment URL:
 
-## Deploy on Vercel
+```bash
+bun run test:e2e:bruno
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The testing split is documented in `docs/adr/0005-use-jest-and-react-testing-library.md` and `docs/adr/0012-use-bruno-for-http-e2e-automation.md`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Vercel deployments should use the configured build command and should not run Bruno during the build step. Run Bruno alongside the usual checks locally or in a separate post-deploy/preview-check workflow against a running URL.
+
+## Package Manager
+
+Use Bun for installs, lockfile updates, and scripts.
