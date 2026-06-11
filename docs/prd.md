@@ -164,7 +164,7 @@ V1 will keep content static in code, use conservative SEO metadata, track analyt
 
 - SEO pages use a prerendered Server Component shell with selective Client Components for browser-only behavior such as lead-form draft persistence and analytics beacons.
 
-- Zod is used for Server Action input validation and environment variable parsing. UI components may use native HTML constraints for immediate feedback, but server-side schemas are authoritative before Prisma writes or protected mutations run.
+- Zod is used for Server Action input validation and environment variable parsing. Server-side schemas are authoritative before Prisma writes or protected mutations run. The public lead form and admin login form render app-owned inline validation instead of native browser validation popovers so error text remains readable and consistent with the accepted UI.
 
 - Environment variables are parsed through a centralized Zod-backed module, such as `lib/env.ts`, which exposes typed server and public config values. Application code should not read `process.env` directly outside this boundary, except framework configuration files when needed.
 
@@ -190,7 +190,7 @@ V1 will keep content static in code, use conservative SEO metadata, track analyt
 
 - Prisma is used for lead storage, analytics events, rate limiting, and lead status history.
 
-- Prisma schema and committed `prisma/migrations` files are the database schema source of truth. Local schema changes use Prisma Migrate, and deployed environments apply pending migrations with `bunx prisma migrate deploy`.
+- Prisma schema and committed `prisma/migrations` files are the database schema source of truth. Local schema changes use Prisma Migrate, and deployed environments apply pending migrations with `bunx prisma migrate deploy`. Generated Prisma client files under `lib/generated/prisma/` are ignored by Git and regenerated locally or during build.
 
 - Application code accesses Prisma through a single server-only database module, such as `lib/db.ts`. UI components do not import Prisma directly.
 

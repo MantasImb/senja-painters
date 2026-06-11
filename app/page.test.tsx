@@ -1,10 +1,19 @@
 import { render, screen } from "@testing-library/react";
 
-import Home from "./page";
+import { SenjaHomePage } from "@/components/site/SenjaHomePage";
 
 describe("Home", () => {
   it("renders the Senja Painters homepage", () => {
-    render(<Home />);
+    render(
+      <SenjaHomePage
+        leadAction={async () => ({
+          ok: false,
+          message: "",
+          fieldErrors: {},
+          values: {},
+        })}
+      />,
+    );
 
     expect(
       screen.getByRole("heading", {
@@ -15,5 +24,23 @@ describe("Home", () => {
     expect(
       screen.getByRole("button", { name: /send forespørsel/i }),
     ).toBeInTheDocument();
+  });
+
+  it("uses a dedicated hero outline variant for the secondary CTA", () => {
+    render(
+      <SenjaHomePage
+        leadAction={async () => ({
+          ok: false,
+          message: "",
+          fieldErrors: {},
+          values: {},
+        })}
+      />,
+    );
+
+    const secondaryCta = screen.getByRole("link", { name: /se tjenester/i });
+
+    expect(secondaryCta).toHaveClass("bg-transparent", "text-white");
+    expect(secondaryCta).not.toHaveClass("bg-background");
   });
 });
