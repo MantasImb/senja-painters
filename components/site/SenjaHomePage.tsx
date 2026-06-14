@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import { LeadForm, type LeadFormAction } from "@/components/forms/LeadForm";
 import { PageViewBeacon } from "@/components/site/PageViewBeacon";
@@ -198,7 +199,11 @@ function FooterLinkColumn({
             key={link.href}
             variant={inverse ? "siteLinkInverse" : "siteLink"}
           >
-            <a href={link.href}>{link.name}</a>
+            {link.href.startsWith("/") ? (
+              <Link href={link.href}>{link.name}</Link>
+            ) : (
+              <a href={link.href}>{link.name}</a>
+            )}
           </Button>
         ))}
       </div>

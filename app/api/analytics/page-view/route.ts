@@ -27,6 +27,7 @@ export async function POST(request: Request) {
     data: {
       createdAt: new Date(),
       hashedIp: hashIpIdentity(ipIdentity, env.IP_HASH_SECRET),
+      metadata: { page: parsed.data.page },
       name: "page_view",
       page: parsed.data.page,
     },

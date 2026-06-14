@@ -72,9 +72,9 @@ const submissionSchema = z.object({
   email: z
     .string()
     .trim()
+    .pipe(z.union([z.email("Skriv inn en gyldig e-post."), z.literal("")]))
     .optional()
-    .transform((value) => value ?? "")
-    .pipe(z.union([z.literal(""), z.email("Skriv inn en gyldig e-post.")])),
+    .transform((value) => value ?? ""),
   area: z.string().trim().min(1, "Område/by er påkrevd."),
   serviceType: z.enum(
     ["Innvendig maling", "Utvendig maling", "Møbler og detaljer"],
@@ -201,10 +201,23 @@ function formDataToObject(formData: FormData) {
   const values: Record<string, string> = {};
 
   for (const [key, value] of formData.entries()) {
-    values[key] = typeof value === "string" ? value : value.name;
+    values[key] = formDataEntryValueToString(value);
   }
 
   return values;
+}
+
+function formDataEntryValueToString(value: FormDataEntryValue) {
+  if (typeof value === "string") {
+    return value;
+  }
+
+  if (typeof File !== "undefined" && value instanceof File) {
+    return value.name;
+  }
+
+  const namedValue = value as { name?: unknown };
+  return typeof namedValue.name === "string" ? namedValue.name : String(value);
 }
 
 function flattenFieldErrors(error: z.ZodError) {

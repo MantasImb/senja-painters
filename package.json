@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "DATABASE_URL=${DATABASE_URL:-postgresql://user:password@localhost:5432/senja} prisma generate && next build",
+    "build": "bun scripts/build.mjs",
     "start": "next start",
     "lint": "eslint",
     "test": "bun run test:unit",

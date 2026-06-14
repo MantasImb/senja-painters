@@ -89,8 +89,8 @@ Required variables:
 ```sh
 DATABASE_URL="postgresql://..."
 ADMIN_PASSWORD="choose-a-test-password"
-SESSION_SECRET="long-random-test-secret"
-IP_HASH_SECRET="different-long-random-test-secret"
+SESSION_SECRET="replace-with-a-32-character-test-session-secret"
+IP_HASH_SECRET="replace-with-a-32-character-test-ip-hash-secret"
 NEXT_PUBLIC_SITE_URL="http://localhost:3000"
 ```
 
@@ -138,9 +138,9 @@ Expected result:
 
 1. Open `http://localhost:3000/`.
 2. Confirm it redirects to `/no`.
-3. Confirm the page is Norwegian-first and branded as `Senja Painters`.
-4. Confirm the first viewport presents Senja Painters as serving Senja and Finnsnes.
-5. Confirm the accepted prototype design is still recognizable:
+3. Verify the page is Norwegian-first and branded as `Senja Painters`.
+4. Ensure the first viewport presents Senja Painters as serving Senja and Finnsnes.
+5. Check that the accepted prototype design is still recognizable:
    - Hero image remains full-bleed.
    - CTA buttons remain visible.
    - Service image cards remain present.

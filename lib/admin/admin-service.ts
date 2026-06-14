@@ -101,7 +101,7 @@ export async function buildAnalyticsSummary({
 
   return {
     conversionRate:
-      totalPageViews > 0 ? Number(((totalLeads / totalPageViews) * 100).toFixed(2)) : 0,
+      totalPageViews > 0 ? Math.round((totalLeads / totalPageViews) * 10000) / 100 : 0,
     honeypotSubmissionCount: honeypotCount,
     leadsBySourcePage,
     rateLimitedSubmissionCount: blockedCount,

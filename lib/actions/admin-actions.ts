@@ -17,6 +17,7 @@ import {
 import { updateLeadStatus } from "@/lib/admin/admin-service";
 import { getDb } from "@/lib/db";
 import { getServerEnv } from "@/lib/env";
+import { leadStatuses, type LeadStatus } from "@/lib/lead-submission";
 
 export async function loginAdminAction(formData: FormData) {
   const password = String(formData.get("password") ?? "");
@@ -63,6 +64,11 @@ export async function updateLeadStatusAction(formData: FormData) {
 
   const leadId = String(formData.get("leadId") ?? "");
   const newStatus = String(formData.get("status") ?? "");
+
+  if (!isLeadStatus(newStatus)) {
+    throw new Error("Unsupported lead status");
+  }
+
   const lead = await getAdminLeadDetail(leadId);
 
   if (!lead) {
@@ -84,4 +90,8 @@ export async function updateLeadStatusAction(formData: FormData) {
   revalidatePath("/admin");
   revalidatePath(`/admin/leads/${leadId}`);
   redirect(`/admin/leads/${leadId}`);
+}
+
+function isLeadStatus(status: string): status is LeadStatus {
+  return leadStatuses.includes(status as LeadStatus);
 }

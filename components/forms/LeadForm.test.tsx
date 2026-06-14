@@ -140,10 +140,12 @@ describe("LeadForm", () => {
       "bg-white",
       "[color:var(--foreground)]",
     );
-    expect(screen.getByLabelText(/tjeneste/i)).toHaveClass(
+    const serviceSelect = screen.getByLabelText(/tjeneste/i);
+    expect(serviceSelect).toHaveClass(
       "bg-background",
       "[color:var(--foreground)]",
     );
+    expect(serviceSelect.parentElement).toHaveClass("[&_select]:bg-white");
     expect(screen.getByLabelText(/prosjektbeskrivelse/i)).toHaveClass(
       "bg-white",
       "[color:var(--foreground)]",
