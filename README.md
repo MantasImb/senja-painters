@@ -21,6 +21,8 @@ bun run test:e2e
 
 `bun run test` runs Jest with React Testing Library for component and application behavior. `bun run test:ci` runs the usual non-E2E verification path: Jest, lint, and build. `bun run test:e2e` is intentionally separate; it starts a local Next.js dev server when needed and runs the Bruno HTTP E2E collection in `tests/e2e/bruno`.
 
+Use `bun run test`, not `bun test`, for this project. `bun test` invokes Bun's built-in test runner directly and bypasses the Jest `jsdom` environment that component tests need for `window` and `document`.
+
 To run Bruno against an already-running server:
 
 ```bash
@@ -40,3 +42,23 @@ Vercel deployments should use the configured build command and should not run Br
 ## Package Manager
 
 Use Bun for installs, lockfile updates, and scripts.
+
+## Prisma
+
+Prisma schema and migrations are committed under `prisma/`. The generated Prisma client is written to `lib/generated/prisma/` and intentionally ignored by Git.
+
+Create a local `.env.local` or `.env` from `.env.example`, then point `DATABASE_URL` at the database you want to migrate.
+
+Apply committed migrations to the configured database:
+
+```bash
+bunx prisma migrate deploy
+```
+
+Generate the ignored Prisma client:
+
+```bash
+bunx prisma generate
+```
+
+`prisma.config.ts` loads `.env.local` first and `.env` second. `bun run build` also runs `prisma generate` before `next build`.

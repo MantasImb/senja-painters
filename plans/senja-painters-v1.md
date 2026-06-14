@@ -71,8 +71,9 @@ Durable decisions that apply across all phases:
 - **Runtime boundary**: Server Actions, Prisma access, admin auth/session handling, analytics, rate limiting, and route handlers that touch application data use the Node.js runtime. Edge runtime is deferred unless a later lightweight use case justifies edge-compatible database and runtime constraints.
 - **Public rendering**: Public SEO pages should remain static and prerenderable as much as possible. Public page rendering should avoid request-time database reads, cookies, headers, or analytics writes that force dynamic rendering. Admin pages and mutation endpoints may be dynamic.
 - **Client islands**: SEO pages use a prerendered Server Component shell with selective Client Components for browser-only behavior such as lead-form draft persistence and analytics beacons.
-- **Validation boundary**: Zod validates Server Action inputs and environment variables. Native HTML constraints can improve immediate form feedback, but Zod schemas are authoritative before writes and protected mutations.
+- **Validation boundary**: Zod validates Server Action inputs and environment variables. Zod schemas are authoritative before writes and protected mutations, and app-owned validation messaging is preferred where native browser validation UI cannot be made readable and consistent.
 - **Environment boundary**: Environment variables are parsed through a centralized Zod-backed module, such as `lib/env.ts`, which exposes typed server and public config values. Application code should not read `process.env` directly outside this boundary, except framework configuration files when needed.
+- **Form validation presentation**: Server-side Zod schemas are authoritative for lead and admin form validation. The public lead form and admin login form use app-owned inline validation instead of native browser validation popovers, because native popovers are not reliably styleable and caused unreadable contrast in the accepted UI.
 - **Test foundation**: V1 uses Jest with `next/jest`, `jest-environment-jsdom`, React Testing Library, `@testing-library/jest-dom`, and `@testing-library/user-event` for component behavior, validation helpers, Server Action boundaries, auth/session helpers, and browser-local interactions. Bruno collections provide scriptable HTTP-level E2E and smoke automation for public route availability, API-shaped route handlers, health checks, and deployment-facing request/response behavior. Tests should prefer accessible, user-facing queries and behavior assertions where UI is involved; browser-level E2E coverage is deferred until route smoke tests or async Server Component flows justify it.
 - **Package manager**: Bun is used for dependency installation, lockfile management, and project scripts. `bun.lock` is the source-of-truth lockfile, and npm, pnpm, or Yarn lockfiles should not be introduced.
 - **Deferred workflows**: English routes, Google Business Profile support, partner accounts, lead assignment, notes, export, search, email notifications, payments, quotes, scheduling, and calendar workflows are out of scope for V1.
@@ -92,6 +93,8 @@ The admin slice should include password login, signed admin session, protected d
 The confirmation copy should avoid promising a specific response time.
 
 This phase should establish the V1 database shape needed for leads, status history, analytics events, rate limiting, and honeypot monitoring. Public SEO page expansion can still happen after the operational lead/admin path exists.
+
+Implementation note: Phase 1 has been implemented in the current branch. The manual QA guide in `docs/phase-1-qa.md` tracks the inspection path and known follow-up checks.
 
 ### Acceptance criteria
 

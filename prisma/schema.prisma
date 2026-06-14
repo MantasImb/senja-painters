@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum LeadStatus {
+  new
+  contacted
+  sent_to_partner
+  closed
+  spam
+}
+
+enum AnalyticsEventName {
+  page_view
+  lead_submitted
+  admin_login_success
+  admin_login_failed
+  lead_status_changed
+}
+
+model Lead {
+  id                 String            @id @default(cuid())
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  name               String
+  phone              String
+  email              String?
+  area               String
+  serviceType        String
+  propertyType       String?
+  desiredTimeframe   String?
+  projectDescription String
+  consentGiven       Boolean           @default(true)
+  sourcePage         String
+  status             LeadStatus        @default(new)
+  hashedIp           String?
+  userAgent          String?
+  statusEvents       LeadStatusEvent[]
+
+  @@index([createdAt])
+  @@index([sourcePage])
+  @@index([status])
+}
+
+model LeadStatusEvent {
+  id             String     @id @default(cuid())
+  leadId         String
+  lead           Lead       @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  previousStatus LeadStatus?
+  newStatus      LeadStatus
+  changedAt      DateTime   @default(now())
+
+  @@index([leadId])
+  @@index([changedAt])
+}
+
+model AnalyticsEvent {
+  id        String             @id @default(cuid())
+  name      AnalyticsEventName
+  page      String?
+  metadata  Json?
+  hashedIp  String?
+  createdAt DateTime           @default(now())
+
+  @@index([createdAt])
+  @@index([name])
+  @@index([page])
+}
+
+model RateLimitEntry {
+  id                        String   @id @default(cuid())
+  hashedIp                  String
+  windowStart               DateTime
+  successfulSubmissionCount Int      @default(0)
+  blockedSubmissionCount    Int      @default(0)
+  updatedAt                 DateTime @updatedAt
+
+  @@unique([hashedIp, windowStart])
+  @@index([windowStart])
+}
+
+model HoneypotSubmission {
+  id              String   @id @default(cuid())
+  createdAt       DateTime @default(now())
+  submittedFields Json
+  sourcePage      String
+  filledHoneypot  String
+  userAgent       String?
+  hashedIp        String
+
+  @@index([createdAt])
+  @@index([sourcePage])
+}
