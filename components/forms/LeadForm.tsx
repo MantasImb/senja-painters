@@ -282,7 +282,7 @@ export function LeadForm({
             className="font-normal leading-6 text-neutral-600"
             htmlFor="consent"
           >
-            Jeg samtykker til at Senja Painters kan kontakte meg om denne
+            Jeg samtykker til at Senja Malere kan kontakte meg om denne
             forespørselen. *
           </FieldLabel>
           <FieldError>{state.fieldErrors.consent}</FieldError>

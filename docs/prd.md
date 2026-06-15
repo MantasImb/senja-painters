@@ -1,16 +1,16 @@
-# PRD: Senja Painters V1
+# PRD: Senja Malere V1
 
 ## Problem Statement
 
 People in Senja and Finnsnes need a simple way to request professional painting help without calling around, comparing unclear options, or navigating a cluttered contractor website.
 
-Senja Painters needs a Norwegian-first website that can rank for local painting searches, present the new brand as ready for work, collect qualified painting leads through a form, and let an internal admin review those leads. The first version should be minimal, credible, SEO-conscious, and ready to expand later with more locations, English content, Google Business Profile support, and partner/painter workflows.
+Senja Malere needs a Norwegian-first website that can rank for local painting searches, present the new brand as ready for work, collect qualified painting leads through a form, and let an internal admin review those leads. The first version should be minimal, credible, SEO-conscious, and ready to expand later with more locations, English content, Google Business Profile support, and partner/painter workflows.
 
 ## Solution
 
-Build a Norwegian-first Next.js website for the new brand **Senja Painters**, focused on painting services in Senja and Finnsnes.
+Build a Norwegian-first Next.js website for the new brand **Senja Malere**, focused on painting services in Senja and Finnsnes.
 
-The public site will present Senja Painters as a local painting business, not as a generic referral marketplace. Users can submit painting requests through embedded forms on major pages and a dedicated contact page. Submitted leads are stored in a Railway Postgres database using Prisma.
+The public site will present Senja Malere as a local painting business, not as a generic referral marketplace. Users can submit painting requests through embedded forms on major pages and a dedicated contact page. Submitted leads are stored in a Railway Postgres database using Prisma.
 
 The internal admin dashboard will be protected by a single environment-based admin password. Admin users can review leads, update lead statuses, and see simple analytics for page views, leads, and conversion rate.
 
@@ -22,13 +22,13 @@ V1 will keep content static in code, use conservative SEO metadata, track analyt
 
 1. As a homeowner in Senja, I want to find a local painter online, so that I can request help without calling multiple companies.
 
-2. As a homeowner in Finnsnes, I want to understand whether Senja Painters serves my area, so that I know my request is relevant.
+2. As a homeowner in Finnsnes, I want to understand whether Senja Malere serves my area, so that I know my request is relevant.
 
 3. As a visitor, I want the website to be written primarily in Norwegian, so that it feels local and easy to understand.
 
 4. As a visitor, I want to see painting services clearly divided into innvendig maling, utvendig maling, and møbelmaling, so that I can choose the service that matches my project.
 
-5. As a visitor, I want to submit my name, phone number, area, service type, project description, and consent, so that Senja Painters can contact me about the job.
+5. As a visitor, I want to submit my name, phone number, area, service type, project description, and consent, so that Senja Malere can contact me about the job.
 
 6. As a visitor, I want email to be optional, so that I can submit a request using only phone contact.
 
@@ -82,7 +82,7 @@ V1 will keep content static in code, use conservative SEO metadata, track analyt
 
 ## Implementation Decisions
 
-- The brand is **Senja Painters**.
+- The brand is **Senja Malere**.
 
 - The V1 market is Norway, focused on **Senja** and **Finnsnes**.
 
@@ -92,13 +92,13 @@ V1 will keep content static in code, use conservative SEO metadata, track analyt
 
 - Page identity uses internal content keys separate from public pathnames, so future English routes can use localized slugs such as `/en/interior-painting` rather than reusing Norwegian slug text.
 
-- V1 presents Senja Painters as a new professional painting business ready for work, not as a generic lead marketplace.
+- V1 presents Senja Malere as a new professional painting business ready for work, not as a generic lead marketplace.
 
-- V1 must avoid inventing unavailable business details such as organization number, physical address, public phone number, opening hours, reviews, certifications, or years in business. LocalBusiness structured data may describe Senja Painters as a service-area business with `areaServed` and no physical address. Opening hours are omitted from V1 structured data unless they are also made visible in public page content.
+- V1 must avoid inventing unavailable business details such as organization number, physical address, public phone number, opening hours, reviews, certifications, or years in business. LocalBusiness structured data may describe Senja Malere as a service-area business with `areaServed` and no physical address. Opening hours are omitted from V1 structured data unless they are also made visible in public page content.
 
 - Public contact is form-only. No public phone number or public email is shown in V1.
 
-- After form submission, the site tells the customer that the request was received and that Senja Painters will contact them to clarify the project and next steps. V1 does not promise a specific response time.
+- After form submission, the site tells the customer that the request was received and that Senja Malere will contact them to clarify the project and next steps. V1 does not promise a specific response time.
 
 - V1 location pages are limited to:
   - Senja
@@ -402,7 +402,7 @@ V1 will keep content static in code, use conservative SEO metadata, track analyt
 
 ## Further Notes
 
-The site should prioritize honest local credibility. Since Senja Painters is a new brand without organization details, Google Business Profile, reviews, or current project photos, V1 should lean on clear service descriptions, local relevance, simple UX, and a strong contact flow. Real project photos can be added later when available.
+The site should prioritize honest local credibility. Since Senja Malere is a new brand without organization details, Google Business Profile, reviews, or current project photos, V1 should lean on clear service descriptions, local relevance, simple UX, and a strong contact flow. Real project photos can be added later when available.
 
 The SEO strategy should avoid thin duplicated location pages. Senja and Finnsnes are included in V1 because they are the core target areas. Nearby city pages should be added only when they can contain distinct, useful local content.
 

@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { LeadForm, type LeadFormAction } from "@/components/forms/LeadForm";
 import { PageViewBeacon } from "@/components/site/PageViewBeacon";
+import { SiteHeader } from "@/components/site/SiteHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -43,11 +44,12 @@ export function SenjaHomePage({
   return (
     <main className="min-h-screen bg-neutral-100 text-neutral-950">
       <PageViewBeacon page="/no" />
+      <SiteHeader overlay />
       <PictureHero
-        eyebrow="Senja Painters"
+        eyebrow="Senja Malere"
         kicker="Senja og Finnsnes"
         title="Malerhjelp for hjem på Senja og i Finnsnes."
-        text="Lokalt malerarbeid starter best med en enkel avklaring. Fortell oss kort om prosjektet, så tar Senja Painters kontakt om omfang, tidspunkt og neste steg."
+        text="Lokalt malerarbeid starter best med en enkel avklaring. Fortell oss kort om prosjektet, så tar Senja Malere kontakt om omfang, tidspunkt og neste steg."
         align="bottom"
       />
       <ServicesImageCards />
@@ -115,7 +117,7 @@ function ServicesImageCards() {
       <SectionIntro
         eyebrow="Tjenester"
         title="Tre tydelige tjenester for hjem og detaljer."
-        text="Tjenestene er presentert med tydelige bildekort, slik at besøkende raskt kan skanne hva Senja Painters kan hjelpe med."
+        text="Tjenestene er presentert med tydelige bildekort, slik at besøkende raskt kan skanne hva Senja Malere kan hjelpe med."
       />
       <div className="mt-12 grid gap-6 lg:grid-cols-3">
         {serviceCards.map((service) => (
@@ -152,7 +154,7 @@ function SeoFooter() {
     <footer className="border-t border-neutral-300 bg-neutral-950 text-white">
       <div className="mx-auto grid max-w-7xl gap-12 px-5 py-16 sm:px-8 lg:grid-cols-[1.1fr_0.9fr_0.9fr]">
         <div>
-          <p className="text-3xl font-semibold">Senja Painters</p>
+          <p className="text-3xl font-semibold">Senja Malere</p>
           <p className="mt-5 max-w-md leading-7 text-white/70">
             Norsk først, lokalt rettet og bygget rundt forespørsler fra
             boligeiere i Senja-regionen.

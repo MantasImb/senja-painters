@@ -1,9 +1,9 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 
 import { SenjaHomePage } from "@/components/site/SenjaHomePage";
 
 describe("Home", () => {
-  it("renders the Senja Painters homepage", () => {
+  it("renders the Senja Malere homepage", () => {
     render(
       <SenjaHomePage
         leadAction={async () => ({
@@ -42,5 +42,38 @@ describe("Home", () => {
 
     expect(secondaryCta).toHaveClass("bg-transparent", "text-white");
     expect(secondaryCta).not.toHaveClass("bg-background");
+  });
+
+  it("lets visitors navigate from grouped top-level menu sections", () => {
+    render(
+      <SenjaHomePage
+        leadAction={async () => ({
+          ok: false,
+          message: "",
+          fieldErrors: {},
+          values: {},
+        })}
+      />,
+    );
+
+    const navigation = screen.getByRole("navigation", {
+      name: /hovednavigasjon/i,
+    });
+
+    expect(
+      within(navigation).getByRole("button", { name: /områder/i }),
+    ).toBeInTheDocument();
+    expect(
+      within(navigation).getByRole("button", { name: /tjenester/i }),
+    ).toBeInTheDocument();
+    expect(
+      within(navigation).queryByRole("link", { name: /innvendig maling/i }),
+    ).not.toBeInTheDocument();
+    expect(
+      within(navigation).getByRole("link", { name: /kontakt/i }),
+    ).toHaveAttribute("href", "/no/kontakt");
+    expect(
+      within(navigation).getByRole("link", { name: /personvern/i }),
+    ).toHaveAttribute("href", "/no/personvern");
   });
 });

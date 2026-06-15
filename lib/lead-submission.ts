@@ -92,7 +92,7 @@ const submissionSchema = z.object({
 });
 
 const successMessage =
-  "Takk, forespørselen er mottatt. Senja Painters tar kontakt for å avklare prosjektet og neste steg.";
+  "Takk, forespørselen er mottatt. Senja Malere tar kontakt for å avklare prosjektet og neste steg.";
 
 const genericFailureMessage =
   "Forespørselen kunne ikke sende akkurat nå. Prøv igjen senere.";

@@ -1,6 +1,6 @@
-# Senja Painters Website
+# Senja Malere Website
 
-Norwegian-first Next.js website for Senja Painters.
+Norwegian-first Next.js website for Senja Malere.
 
 ## Development
 

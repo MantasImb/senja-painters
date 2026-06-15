@@ -45,7 +45,7 @@ export default async function AdminDashboardPage({
         <header className="flex flex-col gap-4 border-b border-neutral-300 pb-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.16em] text-neutral-600">
-              Senja Painters
+              Senja Malere
             </p>
             <h1 className="mt-2 text-4xl font-semibold tracking-normal">
               Admin

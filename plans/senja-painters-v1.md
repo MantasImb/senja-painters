@@ -1,4 +1,4 @@
-# Plan: Senja Painters V1
+# Plan: Senja Malere V1
 
 > Source PRD: [docs/prd.md](../docs/prd.md)
 
@@ -13,7 +13,7 @@ Repo facts:
 
 PRD requirements:
 
-- Build a Norwegian-first public website for Senja Painters, focused on Senja and Finnsnes.
+- Build a Norwegian-first public website for Senja Malere, focused on Senja and Finnsnes.
 - Store submitted leads in Railway Postgres using Prisma.
 - Protect the internal admin dashboard with one environment-based admin password.
 - Keep content static in code for V1.
@@ -29,10 +29,10 @@ Inference:
 
 Durable decisions that apply across all phases:
 
-- **Brand**: The public brand is Senja Painters.
+- **Brand**: The public brand is Senja Malere.
 - **Market**: V1 targets Norway, specifically Senja and Finnsnes.
 - **Language**: Norwegian is the primary V1 language. English and `next-intl` are deferred to V2.
-- **Positioning**: The site presents Senja Painters as a new professional painting business ready for work, not as a generic lead marketplace.
+- **Positioning**: The site presents Senja Malere as a new professional painting business ready for work, not as a generic lead marketplace.
 - **Routes**: V1 public pages are locale-prefixed under `/no`: `/no`, `/no/senja`, `/no/finnsnes`, `/no/innvendig-maling`, `/no/utvendig-maling`, `/no/mobelmaling`, `/no/kontakt`, and `/no/personvern`. `/` redirects to `/no`.
 - **Localized slugs**: Page identity uses internal content keys separate from public pathnames, so future English routes can use localized slugs such as `/en/interior-painting` rather than reusing Norwegian slug text.
 - **Admin routes**: Admin routes are not localized and remain under `/admin`.
@@ -61,7 +61,7 @@ Durable decisions that apply across all phases:
 - **IP identity**: IP identity is derived from the best trusted Vercel/request client IP signal available to the server, such as Vercel-overwritten `x-forwarded-for` or a platform helper. The raw IP value is used only in memory to compute the hash and is never persisted. If no client IP can be determined, the submission uses a stable `unknown` rate-limit bucket.
 - **Spam protection**: V1 uses a honeypot field and IP-hash rate limiting of 3 successful submissions per hashed IP per 24 hours. Filled honeypot submissions are stored in a separate HoneypotSubmission table for spam monitoring and never create or mutate records in the main Lead table. Honeypot-triggered submissions return the same success response as valid submissions, while only writing to HoneypotSubmission. HoneypotSubmission stores submitted form fields, source page, filled honeypot value, user agent, hashed IP identity, and created timestamp, but not raw IP addresses. When the rate limit is exceeded, the form returns a generic failure message without revealing rate-limit internals. Rate-limited submissions do not create Lead or HoneypotSubmission records; RateLimitEntry keeps an aggregate blocked-submission counter for the current hashed identity/window. Third-party anti-spam widgets are out of scope.
 - **SEO**: V1 includes unique page titles, meta descriptions, canonical URLs, Open Graph metadata, sitemap, robots, WebSite JSON-LD, and a simple LocalBusiness JSON-LD graph when verified business facts are available.
-- **SEO restraint**: LocalBusiness structured data may describe Senja Painters as a service-area business with `areaServed` and no physical address. It may include service area and the V1 painting services, but omits opening hours unless they are also made visible in public page content. The site should not assume eligibility for Google LocalBusiness rich results that require an address. V1 excludes fake reviews, ratings, fake address, organization number, fake opening hours, public phone, public email, certifications, and Google Business Profile links before those facts are real, public, and supported by visible site content.
+- **SEO restraint**: LocalBusiness structured data may describe Senja Malere as a service-area business with `areaServed` and no physical address. It may include service area and the V1 painting services, but omits opening hours unless they are also made visible in public page content. The site should not assume eligibility for Google LocalBusiness rich results that require an address. V1 excludes fake reviews, ratings, fake address, organization number, fake opening hours, public phone, public email, certifications, and Google Business Profile links before those facts are real, public, and supported by visible site content.
 - **Content**: Content is static in code. V1 copy is organized in typed static content modules, such as `lib/content/`, rather than being hardcoded directly across page components. This keeps Norwegian-first content easy to review and gives V2 a cleaner migration path to `next-intl` message files. No CMS, admin content editing, blog, or gallery system is included in V1.
 - **SEO metadata ownership**: SEO metadata lives with the typed content modules. Each page content object includes metadata such as title, description, pathname, and Open Graph copy where needed, and page files use shared metadata helpers to generate canonical URLs from `NEXT_PUBLIC_SITE_URL`. Sitemap entries and future language alternates are generated from the typed route/content metadata rather than duplicated manually in individual page files.
 - **Photos**: No real project photos are available yet. V1 should be designed so real photos can be added later without changing the content model or layout strategy, and it should avoid fake, stock, or unsupported project imagery. Real project photos should be used selectively when available: one strong hero or project image if available and a small number of supporting photos. No fake before/after claims.
@@ -86,7 +86,7 @@ Durable decisions that apply across all phases:
 
 ### What to build
 
-Replace the starter homepage with a Norwegian Senja Painters landing page and build the minimal internal admin path needed to operate real leads from day one. The slice should include the compact lead form, client-side draft persistence, validation, explicit consent handling, Prisma-backed lead creation, source-page capture, draft clearing, spam controls, and a clear confirmation that Senja Painters will contact the customer to clarify the project and next steps.
+Replace the starter homepage with a Norwegian Senja Malere landing page and build the minimal internal admin path needed to operate real leads from day one. The slice should include the compact lead form, client-side draft persistence, validation, explicit consent handling, Prisma-backed lead creation, source-page capture, draft clearing, spam controls, and a clear confirmation that Senja Malere will contact the customer to clarify the project and next steps.
 
 The admin slice should include password login, signed admin session, protected dashboard, newest-first lead list, status filters, lead detail, status updates with status history, and a simple analytics summary for the metrics already decided. It should not add notes, export, search, partner assignment, email notifications, or a full honeypot inbox.
 
@@ -98,8 +98,8 @@ Implementation note: Phase 1 has been implemented in the current branch. The man
 
 ### Acceptance criteria
 
-- [ ] The homepage renders Norwegian Senja Painters content instead of starter-template content.
-- [ ] The homepage presents Senja Painters as a local painting business serving Senja and Finnsnes.
+- [ ] The homepage renders Norwegian Senja Malere content instead of starter-template content.
+- [ ] The homepage presents Senja Malere as a local painting business serving Senja and Finnsnes.
 - [ ] The compact lead form includes all required and optional V1 lead fields.
 - [ ] Email can be omitted while the form still submits successfully.
 - [ ] Name, phone, area/city, service type, project description, and consent are required.
