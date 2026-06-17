@@ -170,11 +170,14 @@ function createPrismaAdminAnalyticsRepository(
         },
         select: {
           createdAt: true,
+          hashedIp: true,
           id: true,
+          landingPage: true,
           name: true,
           page: true,
+          sessionId: true,
+          visitorId: true,
         },
-        take: 100,
         where: since
           ? {
               createdAt: {
@@ -208,6 +211,32 @@ function createPrismaAdminAnalyticsRepository(
         count: leadGroup._count._all,
         sourcePage: leadGroup.sourcePage,
       }));
+    },
+    async listLeadsByLandingPage({ since }) {
+      const leads = await db.lead.findMany({
+        select: {
+          landingPage: true,
+          sourcePage: true,
+        },
+        where: since
+          ? {
+              createdAt: {
+                gte: since,
+              },
+            }
+          : undefined,
+      });
+
+      const counts = new Map<string, number>();
+
+      for (const lead of leads) {
+        const landingPage = lead.landingPage ?? lead.sourcePage;
+        counts.set(landingPage, (counts.get(landingPage) ?? 0) + 1);
+      }
+
+      return Array.from(counts.entries())
+        .map(([landingPage, count]) => ({ landingPage, count }))
+        .sort((a, b) => b.count - a.count || a.landingPage.localeCompare(b.landingPage));
     },
   };
 }

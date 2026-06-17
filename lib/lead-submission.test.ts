@@ -25,6 +25,10 @@ function validSubmission(overrides: Record<string, string> = {}) {
     projectDescription: "Male stue og kjøkken.",
     consent: "yes",
     sourcePage: "/no",
+    visitorId: "visitor_1",
+    sessionId: "session_1",
+    landingPage: "/no/senja",
+    pagesSeen: "3",
     companyWebsite: "",
     ...overrides,
   });
@@ -81,8 +85,12 @@ describe("createLeadSubmission", () => {
     expect(repository.leads).toEqual([
       expect.objectContaining({
         email: null,
+        landingPage: "/no/senja",
+        pagesSeen: 3,
+        sessionId: "session_1",
         sourcePage: "/no",
         status: "new",
+        visitorId: "visitor_1",
       }),
     ]);
     expect(repository.successfulCount).toBe(1);
@@ -90,6 +98,9 @@ describe("createLeadSubmission", () => {
       expect.objectContaining({
         name: "lead_submitted",
         page: "/no",
+        landingPage: "/no/senja",
+        sessionId: "session_1",
+        visitorId: "visitor_1",
       }),
     ]);
   });

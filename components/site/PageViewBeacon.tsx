@@ -1,10 +1,23 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+
+import { recordPageViewAttribution } from "@/lib/analytics/attribution";
 
 export function PageViewBeacon({ page }: { page: string }) {
+  const lastSentPageRef = useRef<string | null>(null);
+
   useEffect(() => {
-    const payload = JSON.stringify({ page });
+    if (lastSentPageRef.current === page) {
+      return;
+    }
+
+    lastSentPageRef.current = page;
+
+    const payload = JSON.stringify({
+      page,
+      ...recordPageViewAttribution(page),
+    });
 
     if (navigator.sendBeacon) {
       navigator.sendBeacon("/api/analytics/page-view", payload);

@@ -24,6 +24,10 @@ export type AnalyticsEventListItem = {
   id: string;
   name: string;
   page: string | null;
+  hashedIp: string | null;
+  visitorId: string | null;
+  sessionId: string | null;
+  landingPage: string | null;
   createdAt: Date;
 };
 
@@ -35,6 +39,9 @@ export type AdminAnalyticsRepository = {
   listLeadsBySourcePage(input: {
     since?: Date;
   }): Promise<{ sourcePage: string; count: number }[]>;
+  listLeadsByLandingPage(input: {
+    since?: Date;
+  }): Promise<{ landingPage: string; count: number }[]>;
 };
 
 export type AnalyticsTimeframe = "7d" | "30d" | "all";
@@ -88,21 +95,32 @@ export async function buildAnalyticsSummary({
   timeframe: AnalyticsTimeframe;
 }) {
   const since = getTimeframeStart(now, timeframe);
-  const [events, totalLeads, leadsBySourcePage, honeypotCount, blockedCount] =
-    await Promise.all([
-      repository.listAnalyticsEvents({ since }),
-      repository.countLeads({ since }),
-      repository.listLeadsBySourcePage({ since }),
-      repository.countHoneypotSubmissions({ since }),
-      repository.countBlockedSubmissions({ since }),
-    ]);
+  const [
+    events,
+    totalLeads,
+    leadsBySourcePage,
+    leadsByLandingPage,
+    honeypotCount,
+    blockedCount,
+  ] = await Promise.all([
+    repository.listAnalyticsEvents({ since }),
+    repository.countLeads({ since }),
+    repository.listLeadsBySourcePage({ since }),
+    repository.listLeadsByLandingPage({ since }),
+    repository.countHoneypotSubmissions({ since }),
+    repository.countBlockedSubmissions({ since }),
+  ]);
   const pageViewEvents = events.filter((event) => event.name === "page_view");
   const totalPageViews = pageViewEvents.length;
+  const totalSessions = countUniqueSessionIdentities(pageViewEvents);
+  const totalUniqueVisitors = countUniqueVisitorIdentities(pageViewEvents);
 
   return {
     conversionRate:
-      totalPageViews > 0 ? Math.round((totalLeads / totalPageViews) * 10000) / 100 : 0,
+      totalSessions > 0 ? Math.round((totalLeads / totalSessions) * 10000) / 100 : 0,
     honeypotSubmissionCount: honeypotCount,
+    landingPagesBySession: countSessionsByLandingPage(pageViewEvents),
+    leadsByLandingPage,
     leadsBySourcePage,
     rateLimitedSubmissionCount: blockedCount,
     recentEvents: events
@@ -111,6 +129,8 @@ export async function buildAnalyticsSummary({
       .slice(0, 10),
     totalLeads,
     totalPageViews,
+    totalSessions,
+    totalUniqueVisitors,
     viewsByPage: countEventsByPage(pageViewEvents),
   };
 }
@@ -129,6 +149,42 @@ function countEventsByPage(events: AnalyticsEventListItem[]) {
   return Array.from(counts.entries())
     .map(([page, count]) => ({ page, count }))
     .sort((a, b) => b.count - a.count || a.page.localeCompare(b.page));
+}
+
+function countUniqueVisitorIdentities(events: AnalyticsEventListItem[]) {
+  return countUnique(
+    events.map((event) => event.visitorId ?? event.hashedIp ?? event.id),
+  );
+}
+
+function countUniqueSessionIdentities(events: AnalyticsEventListItem[]) {
+  return countUnique(
+    events.map((event) => event.sessionId ?? event.visitorId ?? event.hashedIp ?? event.id),
+  );
+}
+
+function countSessionsByLandingPage(events: AnalyticsEventListItem[]) {
+  const sessionsByLandingPage = new Map<string, Set<string>>();
+
+  for (const event of events) {
+    const sessionIdentity =
+      event.sessionId ?? event.visitorId ?? event.hashedIp ?? event.id;
+    const landingPage = event.landingPage ?? event.page ?? "ukjent";
+    const sessionSet = sessionsByLandingPage.get(landingPage) ?? new Set<string>();
+    sessionSet.add(sessionIdentity);
+    sessionsByLandingPage.set(landingPage, sessionSet);
+  }
+
+  return Array.from(sessionsByLandingPage.entries())
+    .map(([landingPage, sessions]) => ({
+      landingPage,
+      count: sessions.size,
+    }))
+    .sort((a, b) => b.count - a.count || a.landingPage.localeCompare(b.landingPage));
+}
+
+function countUnique(values: string[]) {
+  return new Set(values).size;
 }
 
 function getTimeframeStart(now: Date, timeframe: AnalyticsTimeframe) {

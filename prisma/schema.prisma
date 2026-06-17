@@ -37,6 +37,10 @@ model Lead {
   projectDescription String
   consentGiven       Boolean           @default(true)
   sourcePage         String
+  visitorId          String?
+  sessionId          String?
+  landingPage        String?
+  pagesSeen          Int?
   status             LeadStatus        @default(new)
   hashedIp           String?
   userAgent          String?
@@ -44,32 +48,40 @@ model Lead {
 
   @@index([createdAt])
   @@index([sourcePage])
+  @@index([landingPage])
+  @@index([sessionId])
   @@index([status])
 }
 
 model LeadStatusEvent {
-  id             String     @id @default(cuid())
+  id             String      @id @default(cuid())
   leadId         String
-  lead           Lead       @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  lead           Lead        @relation(fields: [leadId], references: [id], onDelete: Cascade)
   previousStatus LeadStatus?
   newStatus      LeadStatus
-  changedAt      DateTime   @default(now())
+  changedAt      DateTime    @default(now())
 
   @@index([leadId])
   @@index([changedAt])
 }
 
 model AnalyticsEvent {
-  id        String             @id @default(cuid())
-  name      AnalyticsEventName
-  page      String?
-  metadata  Json?
-  hashedIp  String?
-  createdAt DateTime           @default(now())
+  id          String             @id @default(cuid())
+  name        AnalyticsEventName
+  page        String?
+  metadata    Json?
+  hashedIp    String?
+  visitorId   String?
+  sessionId   String?
+  landingPage String?
+  createdAt   DateTime           @default(now())
 
   @@index([createdAt])
   @@index([name])
   @@index([page])
+  @@index([visitorId])
+  @@index([sessionId])
+  @@index([landingPage])
 }
 
 model RateLimitEntry {

@@ -60,11 +60,13 @@ export default async function AdminDashboardPage({
           </Button>
         </header>
 
-        <section className="grid gap-4 py-8 md:grid-cols-4">
+        <section className="grid gap-4 py-8 md:grid-cols-3 xl:grid-cols-6">
+          <Metric label="Besøkende" value={analytics.totalUniqueVisitors} />
+          <Metric label="Besøk" value={analytics.totalSessions} />
           <Metric label="Sidevisninger" value={analytics.totalPageViews} />
           <Metric label="Leads" value={analytics.totalLeads} />
           <Metric
-            label="Konvertering"
+            label="Konvertering per besøk"
             value={`${analytics.conversionRate.toFixed(2)}%`}
           />
           <Metric
@@ -96,12 +98,28 @@ export default async function AdminDashboardPage({
 
         <section className="grid gap-6 lg:grid-cols-2">
           <AnalyticsList
+            emptyLabel="Ingen besøk ennå."
+            items={analytics.landingPagesBySession.map((item) => ({
+              label: item.landingPage,
+              value: item.count,
+            }))}
+            title="Landingssider per besøk"
+          />
+          <AnalyticsList
             emptyLabel="Ingen sidevisninger ennå."
             items={analytics.viewsByPage.map((item) => ({
               label: item.page,
               value: item.count,
             }))}
             title="Visninger per side"
+          />
+          <AnalyticsList
+            emptyLabel="Ingen leads ennå."
+            items={analytics.leadsByLandingPage.map((item) => ({
+              label: item.landingPage,
+              value: item.count,
+            }))}
+            title="Leads per landingsside"
           />
           <AnalyticsList
             emptyLabel="Ingen leads ennå."

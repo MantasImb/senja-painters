@@ -10,6 +10,10 @@ export const runtime = "nodejs";
 
 const pageViewSchema = z.object({
   page: z.string().min(1).max(200),
+  visitorId: z.string().trim().min(1).max(200).optional(),
+  sessionId: z.string().trim().min(1).max(200).optional(),
+  landingPage: z.string().trim().min(1).max(200).optional(),
+  pagesSeen: z.number().int().min(1).max(10000).optional(),
 });
 
 export async function POST(request: Request) {
@@ -27,9 +31,18 @@ export async function POST(request: Request) {
     data: {
       createdAt: new Date(),
       hashedIp: hashIpIdentity(ipIdentity, env.IP_HASH_SECRET),
-      metadata: { page: parsed.data.page },
+      landingPage: parsed.data.landingPage ?? parsed.data.page,
+      metadata: {
+        landingPage: parsed.data.landingPage ?? parsed.data.page,
+        page: parsed.data.page,
+        pagesSeen: parsed.data.pagesSeen ?? null,
+        sessionId: parsed.data.sessionId ?? null,
+        visitorId: parsed.data.visitorId ?? null,
+      },
       name: "page_view",
       page: parsed.data.page,
+      sessionId: parsed.data.sessionId ?? null,
+      visitorId: parsed.data.visitorId ?? null,
     },
   });
 

@@ -23,6 +23,10 @@ export type LeadSubmissionRecord = {
   projectDescription: string;
   consentGiven: true;
   sourcePage: string;
+  visitorId: string | null;
+  sessionId: string | null;
+  landingPage: string | null;
+  pagesSeen: number | null;
   status: LeadStatus;
   hashedIp: string;
   userAgent: string | null;
@@ -41,8 +45,11 @@ export type HoneypotSubmissionRecord = {
 export type AnalyticsEventRecord = {
   name: "lead_submitted";
   page: string;
-  metadata: Record<string, string>;
+  metadata: Record<string, number | string | null>;
   hashedIp: string;
+  visitorId: string | null;
+  sessionId: string | null;
+  landingPage: string | null;
   createdAt: Date;
 };
 
@@ -88,6 +95,10 @@ const submissionSchema = z.object({
     .min(1, "Prosjektbeskrivelse er påkrevd."),
   consent: z.literal("yes", "Samtykke er påkrevd."),
   sourcePage: z.string().trim().min(1).default("/no"),
+  visitorId: optionalAttributionString(),
+  sessionId: optionalAttributionString(),
+  landingPage: optionalAttributionString(),
+  pagesSeen: z.coerce.number().int().min(1).max(10000).optional().catch(1),
   companyWebsite: z.string().trim().optional().default(""),
 });
 
@@ -168,6 +179,10 @@ export async function createLeadSubmission(
     projectDescription: submission.projectDescription,
     consentGiven: true,
     sourcePage: submission.sourcePage,
+    visitorId: optionalString(submission.visitorId),
+    sessionId: optionalString(submission.sessionId),
+    landingPage: optionalString(submission.landingPage),
+    pagesSeen: submission.pagesSeen ?? null,
     status: "new",
     hashedIp,
     userAgent,
@@ -177,8 +192,18 @@ export async function createLeadSubmission(
   await repository.recordAnalyticsEvent({
     name: "lead_submitted",
     page: submission.sourcePage,
-    metadata: { leadId, serviceType: submission.serviceType },
+    metadata: {
+      landingPage: optionalString(submission.landingPage),
+      leadId,
+      pagesSeen: submission.pagesSeen ?? null,
+      serviceType: submission.serviceType,
+      sessionId: optionalString(submission.sessionId),
+      visitorId: optionalString(submission.visitorId),
+    },
     hashedIp,
+    visitorId: optionalString(submission.visitorId),
+    sessionId: optionalString(submission.sessionId),
+    landingPage: optionalString(submission.landingPage),
     createdAt: now,
   });
 
@@ -237,4 +262,8 @@ function flattenFieldErrors(error: z.ZodError) {
 function optionalString(value: string) {
   const trimmedValue = value.trim();
   return trimmedValue.length > 0 ? trimmedValue : null;
+}
+
+function optionalAttributionString() {
+  return z.string().trim().max(200).optional().default("");
 }

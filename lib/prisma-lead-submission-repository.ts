@@ -41,11 +41,14 @@ export function createPrismaLeadSubmissionRepository(
           desiredTimeframe: lead.desiredTimeframe,
           email: lead.email,
           hashedIp: lead.hashedIp,
+          landingPage: lead.landingPage,
           name: lead.name,
+          pagesSeen: lead.pagesSeen,
           phone: lead.phone,
           projectDescription: lead.projectDescription,
           propertyType: lead.propertyType,
           serviceType: lead.serviceType,
+          sessionId: lead.sessionId,
           sourcePage: lead.sourcePage,
           status: lead.status,
           statusEvents: {
@@ -55,6 +58,7 @@ export function createPrismaLeadSubmissionRepository(
             },
           },
           userAgent: lead.userAgent,
+          visitorId: lead.visitorId,
         },
         select: {
           id: true,
@@ -105,9 +109,12 @@ function mapAnalyticsEvent(event: AnalyticsEventRecord) {
   return {
     createdAt: event.createdAt,
     hashedIp: event.hashedIp,
+    landingPage: event.landingPage,
     metadata: event.metadata,
     name: event.name,
     page: event.page,
+    sessionId: event.sessionId,
+    visitorId: event.visitorId,
   };
 }
 
