@@ -7,8 +7,8 @@
 Repo facts:
 
 - The app is a small Next.js project using Next 16, React 19, TypeScript, and Tailwind 4.
-- The current public app is still the create-next-app starter page.
-- There is no Prisma schema, database layer, admin route, analytics module, or test setup yet.
+- The public app has moved beyond the create-next-app starter and now serves the Norwegian Senja Malere experience.
+- The repo includes Prisma schema/migrations, a server-only database layer, admin routes, analytics helpers, and Jest-based tests.
 - The PRD currently lives under `docs/prd.md`.
 
 PRD requirements:
@@ -50,14 +50,15 @@ Durable decisions that apply across all phases:
 - **Admin sessions**: Admin auth uses a custom signed, HTTP-only cookie session with minimal claims, an HMAC signature, and a default 12-hour expiry. Protected admin pages and Server Actions verify the session before reading or mutating admin-only data.
 - **Admin authorization**: Every admin route and every admin Server Action must verify the signed admin session. Admin pages redirect unauthenticated users to `/admin/login`, and actions repeat authorization instead of relying on the page render as the only security boundary.
 - **Environment**: Required environment variables are `DATABASE_URL`, `ADMIN_PASSWORD`, `SESSION_SECRET`, `IP_HASH_SECRET`, and `NEXT_PUBLIC_SITE_URL`. `SESSION_SECRET` signs admin session cookies. `IP_HASH_SECRET` hashes client IP identity for rate limiting and privacy-preserving analytics.
-- **Deployment workflow**: Vercel deploys prepare the configured database before building and serving the app by running Prisma Client generation and pending migrations, for example `bunx prisma generate && bunx prisma migrate deploy && bun run build`.
+- **Deployment workflow**: Vercel deploys prepare the configured database before building and serving the app with `bun run vercel-build`, which runs Prisma Client generation, pending migrations, and the normal build.
 - **Database environments**: V1 uses two Railway Postgres databases. Production uses its own database, while development, preview, and tests share one non-production database. Database-backed tests may write to the shared non-production database without cleanup, so test-created records should be clearly recognizable and the non-production database must be treated as disposable.
 - **Analytics boundary**: Analytics is isolated behind a small internal observability module.
 - **Analytics collection**: V1 analytics is server-recorded where possible without forcing public SEO pages into dynamic rendering. Page views should be recorded through a first-party client beacon or another mechanism that preserves static public page rendering, while lead/admin events are recorded inside Server Actions after successful operations. V1 does not use third-party analytics scripts or client fingerprinting.
 - **Analytics events**: V1 tracks page_view, lead_submitted, admin_login_success, admin_login_failed, and lead_status_changed.
 - **Honeypot visibility**: V1 admin analytics only shows aggregate honeypot submission counts. Detailed honeypot inspection is done directly in the database if needed.
 - **Rate-limit visibility**: V1 admin analytics only shows aggregate rate-limited submission counts. Rate-limited submission payloads are not stored.
-- **Privacy**: Analytics and rate limiting store hashed or anonymized IP information, not raw IP addresses.
+- **Privacy**: Analytics and rate limiting store hashed or anonymized IP information and session-scoped browser attribution IDs for best-effort grouping, not raw IP addresses.
+- **Browser attribution**: Browser analytics identifiers are scoped to the current browser session and stored as session data, not as a persistent cross-session analytics identifier before consent.
 - **IP identity**: IP identity is derived from the best trusted Vercel/request client IP signal available to the server, such as Vercel-overwritten `x-forwarded-for` or a platform helper. The raw IP value is used only in memory to compute the hash and is never persisted. If no client IP can be determined, the submission uses a stable `unknown` rate-limit bucket.
 - **Spam protection**: V1 uses a honeypot field and IP-hash rate limiting of 3 successful submissions per hashed IP per 24 hours. Filled honeypot submissions are stored in a separate HoneypotSubmission table for spam monitoring and never create or mutate records in the main Lead table. Honeypot-triggered submissions return the same success response as valid submissions, while only writing to HoneypotSubmission. HoneypotSubmission stores submitted form fields, source page, filled honeypot value, user agent, hashed IP identity, and created timestamp, but not raw IP addresses. When the rate limit is exceeded, the form returns a generic failure message without revealing rate-limit internals. Rate-limited submissions do not create Lead or HoneypotSubmission records; RateLimitEntry keeps an aggregate blocked-submission counter for the current hashed identity/window. Third-party anti-spam widgets are out of scope.
 - **SEO**: V1 includes unique page titles, meta descriptions, canonical URLs, Open Graph metadata, sitemap, robots, WebSite JSON-LD, and a simple LocalBusiness JSON-LD graph when verified business facts are available.
@@ -269,7 +270,7 @@ This phase should keep analytics internal and Prisma-backed. Google Analytics, P
 - [ ] Lead submissions are tracked after successful lead creation.
 - [ ] Admin login success and failure are tracked.
 - [ ] Lead status changes are tracked.
-- [ ] AnalyticsEvent stores hashed or anonymized IP information only.
+- [ ] AnalyticsEvent stores hashed or anonymized IP information and session-scoped browser attribution data only.
 - [ ] Admin analytics shows total page views, total leads, and conversion rate.
 - [ ] Admin analytics supports last 7 days, last 30 days, and all-time filters.
 - [ ] Admin analytics shows views by page, leads by source page, and recent events.

@@ -104,7 +104,16 @@ describe("buildAnalyticsSummary", () => {
       async countLeads() {
         return 2;
       },
-      async listAnalyticsEvents() {
+      async countPageViews() {
+        return 3;
+      },
+      async countSessions() {
+        return 2;
+      },
+      async countUniqueVisitors() {
+        return 2;
+      },
+      async listRecentAnalyticsEvents() {
         return [
           {
             id: "event_1",
@@ -146,6 +155,19 @@ describe("buildAnalyticsSummary", () => {
             landingPage: "/no",
             createdAt: new Date("2026-06-10T12:03:00.000Z"),
           },
+        ];
+      },
+      async listSessionsByLandingPage() {
+        return [
+          { landingPage: "/no", count: 1 },
+          { landingPage: "/no/kontakt", count: 1 },
+        ];
+      },
+      async listViewsByPage() {
+        return [
+          { page: "/no", count: 1 },
+          { page: "/no/kontakt", count: 1 },
+          { page: "/no/senja", count: 1 },
         ];
       },
       async listLeadsBySourcePage() {

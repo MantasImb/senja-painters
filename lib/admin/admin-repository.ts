@@ -1,5 +1,6 @@
-import type { PrismaClient } from "@/lib/generated/prisma/client";
+import { Prisma, type PrismaClient } from "@/lib/generated/prisma/client";
 import { getDb } from "@/lib/db";
+import { createAnalyticsEvent } from "@/lib/analytics/server";
 import {
   buildAnalyticsSummary,
   listAdminLeads,
@@ -8,6 +9,8 @@ import {
   type AnalyticsTimeframe,
 } from "@/lib/admin/admin-service";
 import type { LeadStatus } from "@/lib/lead-submission";
+
+const pageViewEventName = "page_view";
 
 export type AdminLeadDetail = AdminLeadListItem & {
   email: string | null;
@@ -100,13 +103,11 @@ export function createPrismaAdminLeadRepository(db: PrismaClient = getDb()) {
             previousStatus,
           },
         }),
-        db.analyticsEvent.create({
-          data: {
-            createdAt: changedAt,
-            metadata: { leadId, newStatus, previousStatus },
-            name: "lead_status_changed",
-            page: "/admin",
-          },
+        createAnalyticsEvent(db, {
+          createdAt: changedAt,
+          metadata: { leadId, newStatus, previousStatus },
+          name: "lead_status_changed",
+          page: "/admin",
         }),
       ]);
     },
@@ -163,8 +164,28 @@ function createPrismaAdminAnalyticsRepository(
           : undefined,
       });
     },
-    async listAnalyticsEvents({ since }) {
+    async countPageViews({ since }) {
+      return db.analyticsEvent.count({
+        where: pageViewWhere(since),
+      });
+    },
+    async countSessions({ since }) {
+      return countDistinctPageViewIdentity(
+        db,
+        Prisma.sql`COALESCE("sessionId", "visitorId", "hashedIp", "id")`,
+        since,
+      );
+    },
+    async countUniqueVisitors({ since }) {
+      return countDistinctPageViewIdentity(
+        db,
+        Prisma.sql`COALESCE("visitorId", "hashedIp", "id")`,
+        since,
+      );
+    },
+    async listRecentAnalyticsEvents({ limit, since }) {
       return db.analyticsEvent.findMany({
+        take: limit,
         orderBy: {
           createdAt: "desc",
         },
@@ -186,6 +207,54 @@ function createPrismaAdminAnalyticsRepository(
             }
           : undefined,
       });
+    },
+    async listSessionsByLandingPage({ since }) {
+      const rows = await db.$queryRaw<
+        { landingPage: string; count: bigint | number }[]
+      >`
+        SELECT
+          COALESCE("landingPage", "page", 'ukjent') AS "landingPage",
+          COUNT(DISTINCT COALESCE("sessionId", "visitorId", "hashedIp", "id")) AS "count"
+        FROM "AnalyticsEvent"
+        WHERE "name" = ${pageViewEventName}::"AnalyticsEventName"
+        ${createdAtSqlCondition(since)}
+        GROUP BY COALESCE("landingPage", "page", 'ukjent')
+        ORDER BY "count" DESC, "landingPage" ASC
+      `;
+
+      return rows.map((row) => ({
+        count: numberFromSqlCount(row.count),
+        landingPage: row.landingPage,
+      }));
+    },
+    async listViewsByPage({ since }) {
+      const groupedEvents = await db.analyticsEvent.groupBy({
+        by: ["page"],
+        _count: {
+          _all: true,
+        },
+        orderBy: [
+          {
+            _count: {
+              page: "desc",
+            },
+          },
+          {
+            page: "asc",
+          },
+        ],
+        where: {
+          ...pageViewWhere(since),
+          page: {
+            not: null,
+          },
+        },
+      });
+
+      return groupedEvents.map((eventGroup) => ({
+        count: eventGroup._count._all,
+        page: eventGroup.page ?? "ukjent",
+      }));
     },
     async listLeadsBySourcePage({ since }) {
       const groupedLeads = await db.lead.groupBy({
@@ -239,4 +308,40 @@ function createPrismaAdminAnalyticsRepository(
         .sort((a, b) => b.count - a.count || a.landingPage.localeCompare(b.landingPage));
     },
   };
+}
+
+async function countDistinctPageViewIdentity(
+  db: PrismaClient,
+  identitySql: Prisma.Sql,
+  since?: Date,
+) {
+  const rows = await db.$queryRaw<{ count: bigint | number }[]>`
+    SELECT COUNT(DISTINCT ${identitySql}) AS "count"
+    FROM "AnalyticsEvent"
+    WHERE "name" = ${pageViewEventName}::"AnalyticsEventName"
+    ${createdAtSqlCondition(since)}
+  `;
+
+  return numberFromSqlCount(rows[0]?.count ?? 0);
+}
+
+function pageViewWhere(since?: Date) {
+  return {
+    name: "page_view" as const,
+    ...(since
+      ? {
+          createdAt: {
+            gte: since,
+          },
+        }
+      : {}),
+  };
+}
+
+function createdAtSqlCondition(since?: Date) {
+  return since ? Prisma.sql`AND "createdAt" >= ${since}` : Prisma.empty;
+}
+
+function numberFromSqlCount(value: bigint | number) {
+  return typeof value === "bigint" ? Number(value) : value;
 }

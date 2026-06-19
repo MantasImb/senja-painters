@@ -70,19 +70,19 @@ function getAttribution(
 }
 
 function getOrCreateVisitorId() {
-  const existingVisitorId = window.localStorage.getItem(visitorStorageKey);
+  const existingVisitorId = window.sessionStorage.getItem(visitorStorageKey);
 
   if (existingVisitorId) {
     return existingVisitorId;
   }
 
   const visitorId = createClientId();
-  window.localStorage.setItem(visitorStorageKey, visitorId);
+  window.sessionStorage.setItem(visitorStorageKey, visitorId);
   return visitorId;
 }
 
 function readSession(): StoredSession | null {
-  const rawSession = window.localStorage.getItem(sessionStorageKey);
+  const rawSession = window.sessionStorage.getItem(sessionStorageKey);
 
   if (!rawSession) {
     return null;
@@ -112,7 +112,7 @@ function readSession(): StoredSession | null {
 }
 
 function writeSession(session: StoredSession) {
-  window.localStorage.setItem(sessionStorageKey, JSON.stringify(session));
+  window.sessionStorage.setItem(sessionStorageKey, JSON.stringify(session));
 }
 
 function createClientId() {

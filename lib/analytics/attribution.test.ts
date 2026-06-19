@@ -6,6 +6,7 @@ import {
 describe("analytics attribution", () => {
   beforeEach(() => {
     window.localStorage.clear();
+    window.sessionStorage.clear();
   });
 
   it("keeps one visitor and session across multiple page views", () => {
@@ -56,5 +57,16 @@ describe("analytics attribution", () => {
       landingPage: "/no",
       pagesSeen: 1,
     });
+  });
+
+  it("does not write a persistent visitor identifier before consent", () => {
+    const attribution = recordPageViewAttribution(
+      "/no",
+      Date.parse("2026-06-15T10:00:00.000Z"),
+    );
+
+    expect(attribution?.visitorId).toBeTruthy();
+    expect(window.localStorage.length).toBe(0);
+    expect(window.sessionStorage.length).toBeGreaterThan(0);
   });
 });

@@ -74,6 +74,11 @@ export default async function AdminDashboardPage({
             value={`${analytics.honeypotSubmissionCount} / ${analytics.rateLimitedSubmissionCount}`}
           />
         </section>
+        <p className="-mt-4 mb-6 max-w-3xl text-sm leading-6 text-neutral-600">
+          Analytics er beste estimat fra klientstyrte hendelser. Tall for
+          besøkende og besøk kan påvirkes av nettleserlagring, blokkeringer og
+          manuelt konstruerte forespørsler.
+        </p>
 
         <div className="mb-6 flex flex-wrap items-center gap-2">
           <span className="mr-2 text-sm font-semibold text-neutral-600">

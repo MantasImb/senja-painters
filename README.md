@@ -39,6 +39,12 @@ The testing split is documented in `docs/adr/0005-use-jest-and-react-testing-lib
 
 Vercel deployments should use the configured build command and should not run Bruno during the build step. Run Bruno alongside the usual checks locally or in a separate post-deploy/preview-check workflow against a running URL.
 
+The Vercel build command should use the repo script that prepares the configured database before building:
+
+```bash
+bun run vercel-build
+```
+
 ## Package Manager
 
 Use Bun for installs, lockfile updates, and scripts.
@@ -62,3 +68,5 @@ bunx prisma generate
 ```
 
 `prisma.config.ts` loads `.env.local` first and `.env` second. `bun run build` also runs `prisma generate` before `next build`.
+
+`bun run vercel-build` runs `prisma generate`, applies committed migrations with `prisma migrate deploy`, and then runs the normal build.

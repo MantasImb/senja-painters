@@ -35,7 +35,17 @@ export type AdminAnalyticsRepository = {
   countBlockedSubmissions(input: { since?: Date }): Promise<number>;
   countHoneypotSubmissions(input: { since?: Date }): Promise<number>;
   countLeads(input: { since?: Date }): Promise<number>;
-  listAnalyticsEvents(input: { since?: Date }): Promise<AnalyticsEventListItem[]>;
+  countPageViews(input: { since?: Date }): Promise<number>;
+  countSessions(input: { since?: Date }): Promise<number>;
+  countUniqueVisitors(input: { since?: Date }): Promise<number>;
+  listRecentAnalyticsEvents(input: {
+    since?: Date;
+    limit: number;
+  }): Promise<AnalyticsEventListItem[]>;
+  listSessionsByLandingPage(input: {
+    since?: Date;
+  }): Promise<{ landingPage: string; count: number }[]>;
+  listViewsByPage(input: { since?: Date }): Promise<{ page: string; count: number }[]>;
   listLeadsBySourcePage(input: {
     since?: Date;
   }): Promise<{ sourcePage: string; count: number }[]>;
@@ -96,95 +106,46 @@ export async function buildAnalyticsSummary({
 }) {
   const since = getTimeframeStart(now, timeframe);
   const [
-    events,
+    totalPageViews,
+    totalSessions,
+    totalUniqueVisitors,
+    viewsByPage,
+    landingPagesBySession,
+    recentEvents,
     totalLeads,
     leadsBySourcePage,
     leadsByLandingPage,
     honeypotCount,
     blockedCount,
   ] = await Promise.all([
-    repository.listAnalyticsEvents({ since }),
+    repository.countPageViews({ since }),
+    repository.countSessions({ since }),
+    repository.countUniqueVisitors({ since }),
+    repository.listViewsByPage({ since }),
+    repository.listSessionsByLandingPage({ since }),
+    repository.listRecentAnalyticsEvents({ since, limit: 10 }),
     repository.countLeads({ since }),
     repository.listLeadsBySourcePage({ since }),
     repository.listLeadsByLandingPage({ since }),
     repository.countHoneypotSubmissions({ since }),
     repository.countBlockedSubmissions({ since }),
   ]);
-  const pageViewEvents = events.filter((event) => event.name === "page_view");
-  const totalPageViews = pageViewEvents.length;
-  const totalSessions = countUniqueSessionIdentities(pageViewEvents);
-  const totalUniqueVisitors = countUniqueVisitorIdentities(pageViewEvents);
 
   return {
     conversionRate:
       totalSessions > 0 ? Math.round((totalLeads / totalSessions) * 10000) / 100 : 0,
     honeypotSubmissionCount: honeypotCount,
-    landingPagesBySession: countSessionsByLandingPage(pageViewEvents),
+    landingPagesBySession,
     leadsByLandingPage,
     leadsBySourcePage,
     rateLimitedSubmissionCount: blockedCount,
-    recentEvents: events
-      .slice()
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-      .slice(0, 10),
+    recentEvents,
     totalLeads,
     totalPageViews,
     totalSessions,
     totalUniqueVisitors,
-    viewsByPage: countEventsByPage(pageViewEvents),
+    viewsByPage,
   };
-}
-
-function countEventsByPage(events: AnalyticsEventListItem[]) {
-  const counts = new Map<string, number>();
-
-  for (const event of events) {
-    if (!event.page) {
-      continue;
-    }
-
-    counts.set(event.page, (counts.get(event.page) ?? 0) + 1);
-  }
-
-  return Array.from(counts.entries())
-    .map(([page, count]) => ({ page, count }))
-    .sort((a, b) => b.count - a.count || a.page.localeCompare(b.page));
-}
-
-function countUniqueVisitorIdentities(events: AnalyticsEventListItem[]) {
-  return countUnique(
-    events.map((event) => event.visitorId ?? event.hashedIp ?? event.id),
-  );
-}
-
-function countUniqueSessionIdentities(events: AnalyticsEventListItem[]) {
-  return countUnique(
-    events.map((event) => event.sessionId ?? event.visitorId ?? event.hashedIp ?? event.id),
-  );
-}
-
-function countSessionsByLandingPage(events: AnalyticsEventListItem[]) {
-  const sessionsByLandingPage = new Map<string, Set<string>>();
-
-  for (const event of events) {
-    const sessionIdentity =
-      event.sessionId ?? event.visitorId ?? event.hashedIp ?? event.id;
-    const landingPage = event.landingPage ?? event.page ?? "ukjent";
-    const sessionSet = sessionsByLandingPage.get(landingPage) ?? new Set<string>();
-    sessionSet.add(sessionIdentity);
-    sessionsByLandingPage.set(landingPage, sessionSet);
-  }
-
-  return Array.from(sessionsByLandingPage.entries())
-    .map(([landingPage, sessions]) => ({
-      landingPage,
-      count: sessions.size,
-    }))
-    .sort((a, b) => b.count - a.count || a.landingPage.localeCompare(b.landingPage));
-}
-
-function countUnique(values: string[]) {
-  return new Set(values).size;
 }
 
 function getTimeframeStart(now: Date, timeframe: AnalyticsTimeframe) {

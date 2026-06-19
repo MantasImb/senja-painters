@@ -104,7 +104,7 @@ export const publicPages = {
       },
       {
         title: "Analytics, rate limiting og IP",
-        text: "Siden kan registrere enkle hendelser som sidevisning, landingsside, anonym besøks-ID, besøksøkt og innsendt forespørsel. Senja Malere lagrer ikke rå IP-adresser for analytics eller rate limiting; IP brukes bare midlertidig til å lage en anonymisert eller hash-basert identitet.",
+        text: "Siden kan registrere enkle hendelser som sidevisning, landingsside, anonym besøks-ID for nettleserfanen, besøksøkt og innsendt forespørsel. Analytics-ID-er lagres som øktdata i nettleseren og brukes som beste estimat, ikke som sikre persontall. Senja Malere lagrer ikke rå IP-adresser for analytics eller rate limiting; IP brukes bare midlertidig til å lage en anonymisert eller hash-basert identitet.",
       },
     ],
     title: "Personvern",

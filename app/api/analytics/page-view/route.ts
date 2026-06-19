@@ -2,9 +2,7 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { getDb } from "@/lib/db";
-import { getServerEnv } from "@/lib/env";
-import { getClientIp, hashIpIdentity } from "@/lib/ip-identity";
+import { recordPageViewAnalyticsEvent } from "@/lib/analytics/server";
 
 export const runtime = "nodejs";
 
@@ -23,27 +21,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
 
-  const requestHeaders = await headers();
-  const env = getServerEnv();
-  const ipIdentity = getClientIp(requestHeaders);
-
-  await getDb().analyticsEvent.create({
-    data: {
-      createdAt: new Date(),
-      hashedIp: hashIpIdentity(ipIdentity, env.IP_HASH_SECRET),
-      landingPage: parsed.data.landingPage ?? parsed.data.page,
-      metadata: {
-        landingPage: parsed.data.landingPage ?? parsed.data.page,
-        page: parsed.data.page,
-        pagesSeen: parsed.data.pagesSeen ?? null,
-        sessionId: parsed.data.sessionId ?? null,
-        visitorId: parsed.data.visitorId ?? null,
-      },
-      name: "page_view",
-      page: parsed.data.page,
-      sessionId: parsed.data.sessionId ?? null,
-      visitorId: parsed.data.visitorId ?? null,
-    },
+  await recordPageViewAnalyticsEvent({
+    headers: await headers(),
+    landingPage: parsed.data.landingPage,
+    page: parsed.data.page,
+    pagesSeen: parsed.data.pagesSeen,
+    sessionId: parsed.data.sessionId,
+    visitorId: parsed.data.visitorId,
   });
 
   return NextResponse.json({ ok: true });

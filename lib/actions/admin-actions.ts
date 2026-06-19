@@ -14,23 +14,20 @@ import {
   createPrismaAdminLeadRepository,
   getAdminLeadDetail,
 } from "@/lib/admin/admin-repository";
+import { recordAnalyticsEvent } from "@/lib/analytics/server";
 import { updateLeadStatus } from "@/lib/admin/admin-service";
-import { getDb } from "@/lib/db";
 import { getServerEnv } from "@/lib/env";
 import { leadStatuses, type LeadStatus } from "@/lib/lead-submission";
 
 export async function loginAdminAction(formData: FormData) {
   const password = String(formData.get("password") ?? "");
   const env = getServerEnv();
-  const db = getDb();
 
   if (!isValidAdminPassword(password, env.ADMIN_PASSWORD)) {
-    await db.analyticsEvent.create({
-      data: {
-        createdAt: new Date(),
-        name: "admin_login_failed",
-        page: "/admin/login",
-      },
+    await recordAnalyticsEvent({
+      createdAt: new Date(),
+      name: "admin_login_failed",
+      page: "/admin/login",
     });
     redirect("/admin/login?error=1");
   }
@@ -48,12 +45,10 @@ export async function loginAdminAction(formData: FormData) {
     secure: process.env.NODE_ENV === "production",
   });
 
-  await db.analyticsEvent.create({
-    data: {
-      createdAt: now,
-      name: "admin_login_success",
-      page: "/admin/login",
-    },
+  await recordAnalyticsEvent({
+    createdAt: now,
+    name: "admin_login_success",
+    page: "/admin/login",
   });
 
   redirect("/admin");

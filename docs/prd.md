@@ -175,7 +175,7 @@ V1 will keep content static in code, use conservative SEO metadata, track analyt
   - Railway Postgres for the database
   - Prisma for database client and migrations
 
-- Vercel deploys prepare the configured database before building and serving the app by running Prisma Client generation and pending migrations, for example `bunx prisma generate && bunx prisma migrate deploy && bun run build`.
+- Vercel deploys prepare the configured database before building and serving the app with the repo build script `bun run vercel-build`, which runs Prisma Client generation, pending migrations, and the normal build.
 
 - Database environments use two Railway Postgres databases: production uses its own database, while development, preview, and tests share one non-production database. Database-backed tests may write to the shared non-production database without cleanup, so test-created records should be clearly recognizable and the non-production database must be treated as disposable.
 
@@ -248,9 +248,11 @@ V1 will keep content static in code, use conservative SEO metadata, track analyt
   - admin_login_failed
   - lead_status_changed
 
-- Analytics stores hashed/anonymized IP information, not raw IP addresses.
+- Analytics stores hashed/anonymized IP information and session-scoped browser attribution IDs for best-effort grouping, not raw IP addresses.
 
 - Hashed IP identity is used only where rate limiting or event grouping requires it.
+
+- Browser attribution IDs are scoped to the current browser session and stored as session data, not as a persistent cross-session analytics identifier before consent.
 
 - Rate limiting uses hashed IP identity.
 
@@ -258,10 +260,14 @@ V1 will keep content static in code, use conservative SEO metadata, track analyt
 
 - Analytics dashboard shows:
   - total page views
+  - best-effort visitors
+  - visits/sessions
   - total leads
   - conversion rate
   - views by page
+  - landing pages by visit/session
   - leads by source page
+  - leads by landing page
   - honeypot submission count
   - rate-limited submission count
   - recent events
@@ -356,11 +362,12 @@ V1 will keep content static in code, use conservative SEO metadata, track analyt
   - lead submissions are tracked
   - conversion rate is calculated correctly
   - timeframe filters produce expected aggregates
+  - browser attribution does not create a persistent cross-session identifier before consent
   - raw IP addresses are not stored
 
 - Database tests should verify Prisma model behavior around leads, status events, analytics events, and rate limit entries.
 
-- Privacy-related tests should verify that analytics and rate limiting use hashed IP values rather than raw IP storage.
+- Privacy-related tests should verify that analytics and rate limiting use hashed IP values rather than raw IP storage, and that client-side analytics identifiers are treated as best-effort attribution rather than trustworthy person counts.
 
 ## Out of Scope
 
