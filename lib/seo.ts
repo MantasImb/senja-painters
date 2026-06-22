@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 
 import { getPublicEnv } from "@/lib/env";
 
+const publicEnv = getPublicEnv();
+
 export type PageSeo = {
   description: string;
   openGraphDescription: string;
@@ -9,7 +11,7 @@ export type PageSeo = {
 };
 
 export function absoluteUrl(pathname: string): string {
-  return new URL(pathname, getPublicEnv().NEXT_PUBLIC_SITE_URL).toString();
+  return new URL(pathname, publicEnv.NEXT_PUBLIC_SITE_URL).toString();
 }
 
 export function buildPageMetadata({
