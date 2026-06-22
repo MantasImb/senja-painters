@@ -1,3 +1,10 @@
+import type { PageSeo } from "@/lib/seo";
+
+export type PublicRouteSeo = {
+  pathname: string;
+  seo: PageSeo;
+};
+
 export type PublicPageContent = {
   eyebrow: string;
   formTitle?: string;
@@ -7,9 +14,21 @@ export type PublicPageContent = {
     title: string;
     text: string;
   }[];
+  seo: PageSeo;
   title: string;
   type: "location" | "service" | "contact" | "privacy";
 };
+
+export const publicHomePage = {
+  pathname: "/no",
+  seo: {
+    title: "Senja Malere | Malerhjelp på Senja og i Finnsnes",
+    description:
+      "Senja Malere tar imot forespørsler om innvendig maling, utvendig maling og møbelmaling for hjem på Senja og i Finnsnes.",
+    openGraphDescription:
+      "Malerhjelp for hjem på Senja og i Finnsnes, med en enkel forespørselsvei.",
+  },
+} satisfies PublicRouteSeo;
 
 export const publicPages = {
   finnsnes: {
@@ -28,6 +47,13 @@ export const publicPages = {
         text: "Enten det gjelder et enkelt rom, fasadedetaljer eller møbler som skal få nytt uttrykk, samler skjemaet informasjonen Senja Malere trenger for å ta neste steg.",
       },
     ],
+    seo: {
+      title: "Maler i Finnsnes | Senja Malere",
+      description:
+        "Be om malerhjelp i Finnsnes og nærområdene. Senja Malere tar imot forespørsler om innvendig maling, utvendig maling og møbelmaling.",
+      openGraphDescription:
+        "Lokal malerhjelp for boliger i Finnsnes og nærområdene.",
+    },
     title: "Maler i Finnsnes",
     type: "location",
   },
@@ -47,6 +73,13 @@ export const publicPages = {
         text: "Innvendig arbeid handler både om uttrykk og praktisk gjennomføring i et hjem som ofte er i bruk. Derfor er en enkel første avklaring viktig.",
       },
     ],
+    seo: {
+      title: "Innvendig maling | Senja Malere",
+      description:
+        "Be om hjelp med innvendig maling av vegger, tak og listverk. Senja Malere tar imot forespørsler fra Senja og Finnsnes.",
+      openGraphDescription:
+        "Innvendig maling for rom, vegger, tak og listverk i Senja-regionen.",
+    },
     title: "Innvendig maling",
     type: "service",
   },
@@ -66,6 +99,13 @@ export const publicPages = {
         text: "Senja Malere bruker opplysningene til å kontakte deg om prosjektet, avklare omfang og vurdere praktiske neste steg. Det gis ingen automatisk lovnad om svartid.",
       },
     ],
+    seo: {
+      title: "Kontakt Senja Malere | Forespørsel om malerhjelp",
+      description:
+        "Kontakt Senja Malere via skjema for malerhjelp på Senja og i Finnsnes.",
+      openGraphDescription:
+        "Send forespørsel om malerhjelp til Senja Malere via skjema.",
+    },
     title: "Kontakt Senja Malere",
     type: "contact",
   },
@@ -85,6 +125,13 @@ export const publicPages = {
         text: "V1 bruker ikke uekte prosjektbilder eller før- og etterpå-påstander. Siden er laget slik at ekte bilder kan legges inn senere når Senja Malere har egne prosjekter å vise.",
       },
     ],
+    seo: {
+      title: "Møbelmaling | Senja Malere",
+      description:
+        "Be om hjelp med møbelmaling, skap, dører og detaljer som trenger ny finish. Senja Malere tar imot forespørsler i Senja-regionen.",
+      openGraphDescription:
+        "Møbelmaling og detaljmaling for hjem på Senja og i Finnsnes.",
+    },
     title: "Møbelmaling",
     type: "service",
   },
@@ -107,6 +154,13 @@ export const publicPages = {
         text: "Siden kan registrere enkle hendelser som sidevisning, landingsside, anonym besøks-ID for nettleserfanen, besøksøkt og innsendt forespørsel. Analytics-ID-er lagres som øktdata i nettleseren og brukes som beste estimat, ikke som sikre persontall. Senja Malere lagrer ikke rå IP-adresser for analytics eller rate limiting; IP brukes bare midlertidig til å lage en anonymisert eller hash-basert identitet.",
       },
     ],
+    seo: {
+      title: "Personvern | Senja Malere",
+      description:
+        "Les hvordan Senja Malere behandler forespørsler, samtykke, enkel analytics og rate limiting uten å lagre rå IP-adresser.",
+      openGraphDescription:
+        "Personvern for forespørsler, analytics og rate limiting hos Senja Malere.",
+    },
     title: "Personvern",
     type: "privacy",
   },
@@ -126,6 +180,13 @@ export const publicPages = {
         text: "Senja-siden samler kontaktveien for innvendig maling, utvendig maling og møbelmaling uten å love mer enn det som kan avklares etter at prosjektet er beskrevet.",
       },
     ],
+    seo: {
+      title: "Maler på Senja | Senja Malere",
+      description:
+        "Be om malerhjelp på Senja for innvendig maling, utvendig maling og møbelmaling. Send en enkel forespørsel til Senja Malere.",
+      openGraphDescription:
+        "Lokal malerhjelp for hjem, hytter og detaljer på Senja.",
+    },
     title: "Maler på Senja",
     type: "location",
   },
@@ -145,7 +206,25 @@ export const publicPages = {
         text: "Utvendig maling kan gjelde hele flater eller mindre detaljer. Beskriv gjerne hva som skal males, om det finnes slitasje, og hvor enkelt det er å komme til.",
       },
     ],
+    seo: {
+      title: "Utvendig maling | Senja Malere",
+      description:
+        "Be om hjelp med utvendig maling av fasade, kledning og detaljer der vær, underlag og tilgjengelighet må vurderes.",
+      openGraphDescription:
+        "Utvendig maling for fasade, kledning og detaljer i Senja-regionen.",
+    },
     title: "Utvendig maling",
     type: "service",
   },
 } satisfies Record<string, PublicPageContent>;
+
+export const publicSeoRoutes = [
+  publicHomePage,
+  publicPages.senja,
+  publicPages.finnsnes,
+  publicPages.innvendigMaling,
+  publicPages.utvendigMaling,
+  publicPages.mobelmaling,
+  publicPages.kontakt,
+  publicPages.personvern,
+] satisfies PublicRouteSeo[];
