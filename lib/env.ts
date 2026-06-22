@@ -8,8 +8,17 @@ const serverEnvSchema = z.object({
   SESSION_SECRET: z.string().min(32),
 });
 
+const publicEnvSchema = z.object({
+  NEXT_PUBLIC_SITE_URL: z.url(),
+});
+
 export type ServerEnv = z.infer<typeof serverEnvSchema>;
+export type PublicEnv = z.infer<typeof publicEnvSchema>;
 
 export function getServerEnv(): ServerEnv {
   return serverEnvSchema.parse(process.env);
+}
+
+export function getPublicEnv(): PublicEnv {
+  return publicEnvSchema.parse(process.env);
 }
