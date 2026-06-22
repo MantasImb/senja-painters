@@ -1,7 +1,7 @@
 import type { PrismaClient } from "@/lib/generated/prisma/client";
+import { createAnalyticsEvent } from "@/lib/analytics/server";
 import { getDb } from "@/lib/db";
 import type {
-  AnalyticsEventRecord,
   HoneypotSubmissionRecord,
   LeadSubmissionRepository,
 } from "@/lib/lead-submission";
@@ -41,11 +41,14 @@ export function createPrismaLeadSubmissionRepository(
           desiredTimeframe: lead.desiredTimeframe,
           email: lead.email,
           hashedIp: lead.hashedIp,
+          landingPage: lead.landingPage,
           name: lead.name,
+          pagesSeen: lead.pagesSeen,
           phone: lead.phone,
           projectDescription: lead.projectDescription,
           propertyType: lead.propertyType,
           serviceType: lead.serviceType,
+          sessionId: lead.sessionId,
           sourcePage: lead.sourcePage,
           status: lead.status,
           statusEvents: {
@@ -55,6 +58,7 @@ export function createPrismaLeadSubmissionRepository(
             },
           },
           userAgent: lead.userAgent,
+          visitorId: lead.visitorId,
         },
         select: {
           id: true,
@@ -83,9 +87,7 @@ export function createPrismaLeadSubmissionRepository(
     },
 
     async recordAnalyticsEvent(event) {
-      await db.analyticsEvent.create({
-        data: mapAnalyticsEvent(event),
-      });
+      await createAnalyticsEvent(db, event);
     },
   };
 }
@@ -98,16 +100,6 @@ function mapHoneypotSubmission(submission: HoneypotSubmissionRecord) {
     sourcePage: submission.sourcePage,
     submittedFields: submission.submittedFields,
     userAgent: submission.userAgent,
-  };
-}
-
-function mapAnalyticsEvent(event: AnalyticsEventRecord) {
-  return {
-    createdAt: event.createdAt,
-    hashedIp: event.hashedIp,
-    metadata: event.metadata,
-    name: event.name,
-    page: event.page,
   };
 }
 

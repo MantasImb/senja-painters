@@ -24,6 +24,10 @@ export type AnalyticsEventListItem = {
   id: string;
   name: string;
   page: string | null;
+  hashedIp: string | null;
+  visitorId: string | null;
+  sessionId: string | null;
+  landingPage: string | null;
   createdAt: Date;
 };
 
@@ -31,10 +35,23 @@ export type AdminAnalyticsRepository = {
   countBlockedSubmissions(input: { since?: Date }): Promise<number>;
   countHoneypotSubmissions(input: { since?: Date }): Promise<number>;
   countLeads(input: { since?: Date }): Promise<number>;
-  listAnalyticsEvents(input: { since?: Date }): Promise<AnalyticsEventListItem[]>;
+  countPageViews(input: { since?: Date }): Promise<number>;
+  countSessions(input: { since?: Date }): Promise<number>;
+  countUniqueVisitors(input: { since?: Date }): Promise<number>;
+  listRecentAnalyticsEvents(input: {
+    since?: Date;
+    limit: number;
+  }): Promise<AnalyticsEventListItem[]>;
+  listSessionsByLandingPage(input: {
+    since?: Date;
+  }): Promise<{ landingPage: string; count: number }[]>;
+  listViewsByPage(input: { since?: Date }): Promise<{ page: string; count: number }[]>;
   listLeadsBySourcePage(input: {
     since?: Date;
   }): Promise<{ sourcePage: string; count: number }[]>;
+  listLeadsByLandingPage(input: {
+    since?: Date;
+  }): Promise<{ landingPage: string; count: number }[]>;
 };
 
 export type AnalyticsTimeframe = "7d" | "30d" | "all";
@@ -88,47 +105,47 @@ export async function buildAnalyticsSummary({
   timeframe: AnalyticsTimeframe;
 }) {
   const since = getTimeframeStart(now, timeframe);
-  const [events, totalLeads, leadsBySourcePage, honeypotCount, blockedCount] =
-    await Promise.all([
-      repository.listAnalyticsEvents({ since }),
-      repository.countLeads({ since }),
-      repository.listLeadsBySourcePage({ since }),
-      repository.countHoneypotSubmissions({ since }),
-      repository.countBlockedSubmissions({ since }),
-    ]);
-  const pageViewEvents = events.filter((event) => event.name === "page_view");
-  const totalPageViews = pageViewEvents.length;
+  const [
+    totalPageViews,
+    totalSessions,
+    totalUniqueVisitors,
+    viewsByPage,
+    landingPagesBySession,
+    recentEvents,
+    totalLeads,
+    leadsBySourcePage,
+    leadsByLandingPage,
+    honeypotCount,
+    blockedCount,
+  ] = await Promise.all([
+    repository.countPageViews({ since }),
+    repository.countSessions({ since }),
+    repository.countUniqueVisitors({ since }),
+    repository.listViewsByPage({ since }),
+    repository.listSessionsByLandingPage({ since }),
+    repository.listRecentAnalyticsEvents({ since, limit: 10 }),
+    repository.countLeads({ since }),
+    repository.listLeadsBySourcePage({ since }),
+    repository.listLeadsByLandingPage({ since }),
+    repository.countHoneypotSubmissions({ since }),
+    repository.countBlockedSubmissions({ since }),
+  ]);
 
   return {
     conversionRate:
-      totalPageViews > 0 ? Math.round((totalLeads / totalPageViews) * 10000) / 100 : 0,
+      totalSessions > 0 ? Math.round((totalLeads / totalSessions) * 10000) / 100 : 0,
     honeypotSubmissionCount: honeypotCount,
+    landingPagesBySession,
+    leadsByLandingPage,
     leadsBySourcePage,
     rateLimitedSubmissionCount: blockedCount,
-    recentEvents: events
-      .slice()
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-      .slice(0, 10),
+    recentEvents,
     totalLeads,
     totalPageViews,
-    viewsByPage: countEventsByPage(pageViewEvents),
+    totalSessions,
+    totalUniqueVisitors,
+    viewsByPage,
   };
-}
-
-function countEventsByPage(events: AnalyticsEventListItem[]) {
-  const counts = new Map<string, number>();
-
-  for (const event of events) {
-    if (!event.page) {
-      continue;
-    }
-
-    counts.set(event.page, (counts.get(event.page) ?? 0) + 1);
-  }
-
-  return Array.from(counts.entries())
-    .map(([page, count]) => ({ page, count }))
-    .sort((a, b) => b.count - a.count || a.page.localeCompare(b.page));
 }
 
 function getTimeframeStart(now: Date, timeframe: AnalyticsTimeframe) {

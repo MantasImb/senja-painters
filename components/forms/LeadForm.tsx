@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useMemo, useState } from "react";
+import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +24,9 @@ import {
   nativeSelectControlClassName,
   textareaControlClassName,
 } from "@/components/forms/control-styles";
+import {
+  readCurrentAttribution,
+} from "@/lib/analytics/attribution";
 
 export const leadFormDraftStorageKey = "senja-painters:lead-form-draft";
 
@@ -86,6 +89,10 @@ export function LeadForm({
   sourcePage: string;
   title: string;
 }) {
+  const visitorIdInputRef = useRef<HTMLInputElement>(null);
+  const sessionIdInputRef = useRef<HTMLInputElement>(null);
+  const landingPageInputRef = useRef<HTMLInputElement>(null);
+  const pagesSeenInputRef = useRef<HTMLInputElement>(null);
   const [values, setValues] = useState<LeadFormValues>(() => readDraft());
   const [state, formAction, isPending] = useActionState(
     async (previousState: LeadFormState, formData: FormData) => {
@@ -100,6 +107,30 @@ export function LeadForm({
     },
     initialState,
   );
+
+  useEffect(() => {
+    const attribution = readCurrentAttribution(sourcePage);
+
+    if (!attribution) {
+      return;
+    }
+
+    if (visitorIdInputRef.current) {
+      visitorIdInputRef.current.value = attribution.visitorId;
+    }
+
+    if (sessionIdInputRef.current) {
+      sessionIdInputRef.current.value = attribution.sessionId;
+    }
+
+    if (landingPageInputRef.current) {
+      landingPageInputRef.current.value = attribution.landingPage;
+    }
+
+    if (pagesSeenInputRef.current) {
+      pagesSeenInputRef.current.value = attribution.pagesSeen.toString();
+    }
+  }, [sourcePage]);
 
   useEffect(() => {
     const hasDraft = Object.values(values).some((value) => value.length > 0);
@@ -140,6 +171,30 @@ export function LeadForm({
       noValidate
     >
       <input name="sourcePage" type="hidden" value={sourcePage} />
+      <input
+        name="visitorId"
+        ref={visitorIdInputRef}
+        type="hidden"
+        defaultValue=""
+      />
+      <input
+        name="sessionId"
+        ref={sessionIdInputRef}
+        type="hidden"
+        defaultValue=""
+      />
+      <input
+        name="landingPage"
+        ref={landingPageInputRef}
+        type="hidden"
+        defaultValue={sourcePage}
+      />
+      <input
+        name="pagesSeen"
+        ref={pagesSeenInputRef}
+        type="hidden"
+        defaultValue="1"
+      />
       <div className="sr-only" aria-hidden="true">
         <label>
           Ikke fyll ut dette feltet
@@ -282,7 +337,7 @@ export function LeadForm({
             className="font-normal leading-6 text-neutral-600"
             htmlFor="consent"
           >
-            Jeg samtykker til at Senja Painters kan kontakte meg om denne
+            Jeg samtykker til at Senja Malere kan kontakte meg om denne
             forespørselen. *
           </FieldLabel>
           <FieldError>{state.fieldErrors.consent}</FieldError>

@@ -30,7 +30,7 @@ describe("LeadForm", () => {
         return {
           ok: true,
           message:
-            "Takk, forespørselen er mottatt. Senja Painters tar kontakt for å avklare prosjektet og neste steg.",
+            "Takk, forespørselen er mottatt. Senja Malere tar kontakt for å avklare prosjektet og neste steg.",
           leadId: "lead_1",
           fieldErrors: {},
           values,
