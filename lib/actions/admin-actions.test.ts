@@ -34,6 +34,18 @@ import { loginAdminAction } from "@/lib/actions/admin-actions";
 const redirectMock = jest.mocked(redirect);
 const recordAnalyticsEventMock = jest.mocked(recordAnalyticsEvent);
 
+const testEnvKeys = [
+  "ADMIN_PASSWORD",
+  "DATABASE_URL",
+  "IP_HASH_SECRET",
+  "NEXT_PUBLIC_SITE_URL",
+  "SESSION_SECRET",
+] as const;
+
+const originalEnv = Object.fromEntries(
+  testEnvKeys.map((key) => [key, process.env[key]]),
+);
+
 describe("admin actions", () => {
   beforeEach(() => {
     cookieSetMock.mockClear();
@@ -44,6 +56,18 @@ describe("admin actions", () => {
     process.env.IP_HASH_SECRET = "x".repeat(32);
     process.env.NEXT_PUBLIC_SITE_URL = "https://example.test";
     process.env.SESSION_SECRET = "s".repeat(32);
+  });
+
+  afterEach(() => {
+    for (const key of testEnvKeys) {
+      const originalValue = originalEnv[key];
+
+      if (originalValue === undefined) {
+        delete process.env[key];
+      } else {
+        process.env[key] = originalValue;
+      }
+    }
   });
 
   it("keeps invalid admin login attempts out of the dashboard", async () => {

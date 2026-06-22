@@ -61,6 +61,18 @@ const analyticsSummary = {
   viewsByPage: [],
 };
 
+const testEnvKeys = [
+  "ADMIN_PASSWORD",
+  "DATABASE_URL",
+  "IP_HASH_SECRET",
+  "NEXT_PUBLIC_SITE_URL",
+  "SESSION_SECRET",
+] as const;
+
+const originalEnv = Object.fromEntries(
+  testEnvKeys.map((key) => [key, process.env[key]]),
+);
+
 describe("admin pages", () => {
   beforeEach(() => {
     mockAdminCookieValue = undefined;
@@ -73,6 +85,18 @@ describe("admin pages", () => {
     process.env.IP_HASH_SECRET = "x".repeat(32);
     process.env.NEXT_PUBLIC_SITE_URL = "https://example.test";
     process.env.SESSION_SECRET = "s".repeat(32);
+  });
+
+  afterEach(() => {
+    for (const key of testEnvKeys) {
+      const originalValue = originalEnv[key];
+
+      if (originalValue === undefined) {
+        delete process.env[key];
+      } else {
+        process.env[key] = originalValue;
+      }
+    }
   });
 
   it("redirects unauthenticated dashboard visitors to the admin login page", async () => {
