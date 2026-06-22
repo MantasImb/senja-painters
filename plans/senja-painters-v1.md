@@ -184,15 +184,15 @@ This phase should not add new admin product scope. It should close gaps left by 
 
 ### Acceptance criteria
 
-- [ ] Admin routes are inaccessible without login.
-- [ ] A valid `ADMIN_PASSWORD` grants access to the admin dashboard.
-- [ ] An invalid password does not grant access.
-- [ ] Session behavior uses `SESSION_SECRET`.
-- [ ] Leads appear newest first in the admin dashboard.
-- [ ] Admin users can filter leads by status.
-- [ ] Admin users can open a lead detail view with submitted contact and project information.
-- [ ] No AdminUser model is introduced.
-- [ ] Tests cover inaccessible dashboard, valid login, invalid login, newest-first ordering, status filters, and lead detail visibility.
+- [x] Admin routes are inaccessible without login.
+- [x] A valid `ADMIN_PASSWORD` grants access to the admin dashboard.
+- [x] An invalid password does not grant access.
+- [x] Session behavior uses `SESSION_SECRET`.
+- [x] Leads appear newest first in the admin dashboard.
+- [x] Admin users can filter leads by status.
+- [x] Admin users can open a lead detail view with submitted contact and project information.
+- [x] No AdminUser model is introduced.
+- [x] Tests cover inaccessible dashboard, valid login, invalid login, newest-first ordering, status filters, and lead detail visibility.
 
 ---
 
