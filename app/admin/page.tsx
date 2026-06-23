@@ -136,7 +136,7 @@ export default async function AdminDashboardPage({
           />
         </section>
 
-        <Card className="mt-8 rounded-[8px] border-neutral-300 bg-white">
+        <Card className="mt-8 rounded-[8px] border-neutral-300 bg-white text-neutral-950">
           <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <CardTitle className="text-2xl font-semibold">Leads</CardTitle>
@@ -161,13 +161,13 @@ export default async function AdminDashboardPage({
             <Table className="min-w-[760px]">
               <TableHeader>
                 <TableRow>
-                  <TableHead>Dato</TableHead>
-                  <TableHead>Navn</TableHead>
-                  <TableHead>Område</TableHead>
-                  <TableHead>Tjeneste</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Kilde</TableHead>
-                  <TableHead>Detalj</TableHead>
+                  <TableHead className="text-neutral-700">Dato</TableHead>
+                  <TableHead className="text-neutral-700">Navn</TableHead>
+                  <TableHead className="text-neutral-700">Område</TableHead>
+                  <TableHead className="text-neutral-700">Tjeneste</TableHead>
+                  <TableHead className="text-neutral-700">Status</TableHead>
+                  <TableHead className="text-neutral-700">Kilde</TableHead>
+                  <TableHead className="text-neutral-700">Detalj</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -178,13 +178,21 @@ export default async function AdminDashboardPage({
                     <TableCell>{lead.area}</TableCell>
                     <TableCell>{lead.serviceType}</TableCell>
                     <TableCell>
-                      <Badge className="rounded-[6px]" variant="secondary">
+                      <Badge
+                        className="rounded-[6px] bg-neutral-200 text-neutral-950"
+                        variant="secondary"
+                      >
                         {lead.status}
                       </Badge>
                     </TableCell>
                     <TableCell>{lead.sourcePage}</TableCell>
                     <TableCell>
-                      <Button asChild size="sm" variant="link">
+                      <Button
+                        asChild
+                        className="text-neutral-950 hover:text-neutral-700"
+                        size="sm"
+                        variant="link"
+                      >
                         <Link href={`/admin/leads/${lead.id}`}>Åpne</Link>
                       </Button>
                     </TableCell>
@@ -200,7 +208,7 @@ export default async function AdminDashboardPage({
           </CardContent>
         </Card>
 
-        <Card className="mt-8 rounded-[8px] border-neutral-300 bg-white">
+        <Card className="mt-8 rounded-[8px] border-neutral-300 bg-white text-neutral-950">
           <CardHeader>
             <CardTitle className="text-2xl font-semibold">
               Siste hendelser
@@ -212,7 +220,10 @@ export default async function AdminDashboardPage({
                 className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200 pb-3 text-sm"
                 key={event.id}
               >
-                <Badge className="rounded-[6px]" variant="outline">
+                <Badge
+                  className="rounded-[6px] border-neutral-300 text-neutral-950"
+                  variant="outline"
+                >
                   {event.name}
                 </Badge>
                 <span className="text-neutral-600">{event.page ?? "intern"}</span>
@@ -230,7 +241,7 @@ export default async function AdminDashboardPage({
 
 function Metric({ label, value }: { label: string; value: number | string }) {
   return (
-    <Card className="rounded-[8px] border-neutral-300 bg-white">
+    <Card className="rounded-[8px] border-neutral-300 bg-white text-neutral-950">
       <CardContent>
         <p className="text-sm font-medium text-neutral-600">{label}</p>
         <p className="mt-2 text-3xl font-semibold">{value}</p>
@@ -249,7 +260,7 @@ function AnalyticsList({
   title: string;
 }) {
   return (
-    <Card className="rounded-[8px] border-neutral-300 bg-white">
+    <Card className="rounded-[8px] border-neutral-300 bg-white text-neutral-950">
       <CardHeader>
         <CardTitle className="text-xl font-semibold">{title}</CardTitle>
       </CardHeader>
@@ -280,8 +291,12 @@ function FilterLink({
   return (
     <Button
       asChild
-      className="h-9 rounded-[6px] px-3 text-sm font-semibold"
-      variant={active ? "default" : "outline"}
+      className={
+        active
+          ? "h-9 rounded-[6px] bg-neutral-950 px-3 text-sm font-semibold text-white hover:bg-neutral-700 hover:text-white"
+          : "h-9 rounded-[6px] border-neutral-300 bg-white px-3 text-sm font-semibold text-neutral-950 hover:bg-neutral-200 hover:text-neutral-950"
+      }
+      variant={active ? "brand" : "outline"}
     >
       <Link href={href}>{label}</Link>
     </Button>

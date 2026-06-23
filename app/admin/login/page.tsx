@@ -20,7 +20,7 @@ export default async function AdminLoginPage({
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-neutral-100 px-5 py-12 text-neutral-950">
-      <Card className="w-full max-w-sm rounded-[8px] border-neutral-300 bg-white shadow-xl shadow-black/10">
+      <Card className="w-full max-w-sm rounded-[8px] border-neutral-300 bg-white text-neutral-950 shadow-xl shadow-black/10">
         <form action={loginAdminAction} noValidate>
           <CardHeader>
             <p className="text-sm font-semibold uppercase tracking-[0.16em] text-neutral-600">
