@@ -24,6 +24,11 @@ describe("Home", () => {
     expect(
       screen.getByRole("button", { name: /send forespørsel/i }),
     ).toBeInTheDocument();
+    expect(screen.getByText("Senja")).toBeInTheDocument();
+    expect(screen.getByText("Finnsnes")).toBeInTheDocument();
+    expect(screen.queryByText("Silsand")).not.toBeInTheDocument();
+    expect(screen.queryByText("Gibostad")).not.toBeInTheDocument();
+    expect(screen.queryByRole("img")).not.toBeInTheDocument();
   });
 
   it("uses a dedicated hero outline variant for the secondary CTA", () => {

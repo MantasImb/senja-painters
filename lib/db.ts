@@ -2,7 +2,7 @@ import "server-only";
 
 import { PrismaPg } from "@prisma/adapter-pg";
 
-import { getServerEnv } from "@/lib/env";
+import { getServerEnv, isDevelopmentEnvironment } from "@/lib/env";
 import { PrismaClient } from "@/lib/generated/prisma/client";
 
 const globalForPrisma = globalThis as unknown as {
@@ -20,10 +20,7 @@ export function getDb() {
 
   const prisma = new PrismaClient({
     adapter,
-    log:
-      process.env.NODE_ENV === "development"
-        ? ["query", "error", "warn"]
-        : ["error"],
+    log: isDevelopmentEnvironment() ? ["query", "error", "warn"] : ["error"],
   });
 
   globalForPrisma.prisma = prisma;

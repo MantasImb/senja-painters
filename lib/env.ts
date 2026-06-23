@@ -22,3 +22,11 @@ export function getServerEnv(): ServerEnv {
 export function getPublicEnv(): PublicEnv {
   return publicEnvSchema.parse(process.env);
 }
+
+export function isDevelopmentEnvironment() {
+  return process.env.NODE_ENV === "development";
+}
+
+export function isProductionEnvironment() {
+  return process.env.NODE_ENV === "production";
+}

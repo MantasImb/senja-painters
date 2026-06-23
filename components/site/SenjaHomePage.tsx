@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import { ArmchairIcon, HouseIcon, PaintbrushIcon } from "lucide-react";
 
 import { LeadForm, type LeadFormAction } from "@/components/forms/LeadForm";
 import { PageViewBeacon } from "@/components/site/PageViewBeacon";
@@ -7,33 +7,15 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-
-const areas = ["Senja", "Finnsnes", "Silsand", "Gibostad"];
+import {
+  publicHomePage,
+  publicPages,
+  type PublicHomePageContent,
+} from "@/lib/content/public-pages";
 
 const cityPages = [
-  { name: "Senja", href: "/no/senja" },
-  { name: "Finnsnes", href: "/no/finnsnes" },
-];
-
-const serviceCards = [
-  {
-    title: "Innvendig maling",
-    image: "/interior.jpg",
-    imageAlt: "Nymalt interiør med rene veggflater",
-    text: "Vegger, tak, listverk og rom som trenger en ryddig overflate og et pent sluttresultat.",
-  },
-  {
-    title: "Utvendig maling",
-    image: "/exterior.jpg",
-    imageAlt: "Utvendig malt boligfasade",
-    text: "Fasader, kledning og detaljer der underlag, vær og forarbeid må vurderes før jobben planlegges.",
-  },
-  {
-    title: "Møbler og detaljer",
-    image: "/furniture.jpg",
-    imageAlt: "Malt møbel med detaljert finish",
-    text: "Maling av møbler, skap, dører og detaljer som trenger nytt uttrykk eller bedre finish.",
-  },
+  { name: publicPages.senja.title, href: publicPages.senja.pathname },
+  { name: publicPages.finnsnes.title, href: publicPages.finnsnes.pathname },
 ];
 
 export function SenjaHomePage({
@@ -45,63 +27,37 @@ export function SenjaHomePage({
     <main className="min-h-screen bg-neutral-100 text-neutral-950">
       <PageViewBeacon page="/no" />
       <SiteHeader overlay />
-      <PictureHero
-        eyebrow="Senja Malere"
-        kicker="Senja og Finnsnes"
-        title="Malerhjelp for hjem på Senja og i Finnsnes."
-        text="Lokalt malerarbeid starter best med en enkel avklaring. Fortell oss kort om prosjektet, så tar Senja Malere kontakt om omfang, tidspunkt og neste steg."
-        align="bottom"
-      />
-      <ServicesImageCards />
+      <Hero />
+      <Services />
       <ContactSection leadAction={leadAction} />
       <SeoFooter />
     </main>
   );
 }
 
-function PictureHero({
-  eyebrow,
-  kicker,
-  title,
-  text,
-  align,
-}: {
-  eyebrow: string;
-  kicker: string;
-  title: string;
-  text: string;
-  align: "bottom" | "center";
-}) {
+function Hero() {
+  const { hero } = publicHomePage;
+
   return (
-    <section
-      className={[
-        "relative flex min-h-[88vh] overflow-hidden",
-        align === "bottom" ? "items-end" : "items-center",
-      ].join(" ")}
-    >
-      <Image
-        src="/hero.jpg"
-        alt="Illustrert kysthus med fjell og fjord"
-        fill
-        priority
-        className="object-cover"
-        sizes="100vw"
+    <section className="relative flex min-h-[78vh] items-end overflow-hidden bg-neutral-950">
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(255,255,255,0.14),transparent_28%),linear-gradient(135deg,transparent_0_48%,rgba(255,255,255,0.06)_48%_50%,transparent_50%_100%)]"
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/88 via-black/52 to-black/12" />
-      <div className="relative mx-auto w-full max-w-7xl px-5 pb-14 pt-24 sm:px-8 lg:pb-20">
+      <div className="relative mx-auto w-full max-w-7xl px-5 pb-14 pt-32 sm:px-8 lg:pb-20">
         <div className="max-w-3xl text-white">
           <div className="mb-8 flex flex-wrap items-center gap-3">
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-white/75">
-              {eyebrow}
+              {hero.eyebrow}
             </p>
             <span className="h-px w-12 bg-white/35" />
-            <p className="text-sm font-medium text-white/80">{kicker}</p>
+            <p className="text-sm font-medium text-white/80">{hero.kicker}</p>
           </div>
           <h1 className="text-5xl font-semibold leading-[1.02] tracking-normal sm:text-6xl lg:text-7xl">
-            {title}
+            {hero.title}
           </h1>
           <p className="mt-7 max-w-2xl text-lg leading-8 text-white/84">
-            {text}
+            {hero.text}
           </p>
           <CtaButtons />
           <AreaTags className="mt-10" />
@@ -111,17 +67,13 @@ function PictureHero({
   );
 }
 
-function ServicesImageCards() {
+function Services() {
   return (
     <section id="tjenester" className="mx-auto max-w-7xl px-5 py-24 sm:px-8">
-      <SectionIntro
-        eyebrow="Tjenester"
-        title="Tre tydelige tjenester for hjem og detaljer."
-        text="Tjenestene er presentert med tydelige bildekort, slik at besøkende raskt kan skanne hva Senja Malere kan hjelpe med."
-      />
+      <SectionIntro {...publicHomePage.servicesIntro} />
       <div className="mt-12 grid gap-6 lg:grid-cols-3">
-        {serviceCards.map((service) => (
-          <ImageServiceCard key={service.title} service={service} />
+        {publicHomePage.services.map((service) => (
+          <ServiceCard key={service.pathname} service={service} />
         ))}
       </div>
     </section>
@@ -129,15 +81,13 @@ function ServicesImageCards() {
 }
 
 function ContactSection({ leadAction }: { leadAction: LeadFormAction }) {
+  const { contact } = publicHomePage;
+
   return (
     <section id="foresporsel" className="mx-auto max-w-7xl px-5 py-24 sm:px-8">
       <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
         <div className="max-w-xl pt-2">
-          <SectionIntro
-            eyebrow="Be om kontakt"
-            title="Fortell oss kort om malejobben."
-            text="Skjemaet samler det viktigste for en god første samtale. E-post er valgfritt, og kontakt går gjennom forespørselen."
-          />
+          <SectionIntro {...contact} />
         </div>
         <LeadForm
           action={leadAction}
@@ -156,17 +106,17 @@ function SeoFooter() {
         <div>
           <p className="text-3xl font-semibold">Senja Malere</p>
           <p className="mt-5 max-w-md leading-7 text-white/70">
-            Norsk først, lokalt rettet og bygget rundt forespørsler fra
-            boligeiere i Senja-regionen.
+            {publicHomePage.footerText}
           </p>
         </div>
         <FooterLinkColumn title="Områder" links={cityPages} inverse />
         <FooterLinkColumn
           title="Tjenester"
           links={[
-            { name: "Innvendig maling", href: "/no/innvendig-maling" },
-            { name: "Utvendig maling", href: "/no/utvendig-maling" },
-            { name: "Møbler og detaljer", href: "/no/mobelmaling" },
+            ...publicHomePage.services.map((service) => ({
+              name: service.title,
+              href: service.pathname,
+            })),
           ]}
           inverse
         />
@@ -266,7 +216,7 @@ function AreaTags({ className = "" }: { className?: string }) {
         className,
       ].join(" ")}
     >
-      {areas.map((area) => (
+      {publicHomePage.areas.map((area) => (
         <Badge
           key={area}
           className="rounded-full border-white/25 bg-white/10 px-4 py-2 text-sm font-medium text-white/90"
@@ -279,21 +229,29 @@ function AreaTags({ className = "" }: { className?: string }) {
   );
 }
 
-function ImageServiceCard({ service }: { service: (typeof serviceCards)[number] }) {
+function ServiceCard({
+  service,
+}: {
+  service: PublicHomePageContent["services"][number];
+}) {
+  const Icon =
+    service.icon === "interior"
+      ? PaintbrushIcon
+      : service.icon === "exterior"
+        ? HouseIcon
+        : ArmchairIcon;
+
   return (
-    <Card className="overflow-hidden rounded-[8px] border-neutral-300 bg-white py-0 shadow-sm shadow-black/5">
-      <div className="relative aspect-[5/4] bg-neutral-200">
-        <Image
-          src={service.image}
-          alt={service.imageAlt}
-          fill
-          className="object-cover"
-          sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-        />
-      </div>
+    <Card className="rounded-[8px] border-neutral-300 bg-white shadow-sm shadow-black/5">
       <CardContent className="p-6">
-        <h3 className="text-xl font-semibold">{service.title}</h3>
+        <div className="flex size-12 items-center justify-center rounded-[6px] bg-neutral-950 text-white">
+          <Icon aria-hidden="true" className="size-6" />
+        </div>
+        <h3 className="mt-5 text-xl font-semibold">{service.title}</h3>
         <p className="mt-4 leading-7 text-neutral-600">{service.text}</p>
+        <Button asChild className="mt-6 px-0" variant="link">
+          <Link href={service.pathname}>Les om {service.title.toLowerCase()}</Link>
+        </Button>
       </CardContent>
     </Card>
   );

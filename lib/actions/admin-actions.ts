@@ -13,7 +13,7 @@ import { requireAdminSession } from "@/lib/admin/admin-auth";
 import { createPrismaAdminLeadRepository } from "@/lib/admin/admin-repository";
 import { recordAnalyticsEvent } from "@/lib/analytics/server";
 import { updateLeadStatus } from "@/lib/admin/admin-service";
-import { getServerEnv } from "@/lib/env";
+import { getServerEnv, isProductionEnvironment } from "@/lib/env";
 
 export async function loginAdminAction(formData: FormData) {
   const password = String(formData.get("password") ?? "");
@@ -38,7 +38,7 @@ export async function loginAdminAction(formData: FormData) {
     httpOnly: true,
     path: "/admin",
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: isProductionEnvironment(),
   });
 
   await recordAnalyticsEvent({

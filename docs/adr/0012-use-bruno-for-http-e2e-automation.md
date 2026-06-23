@@ -2,7 +2,7 @@
 
 Status: accepted
 
-Senja Malere V1 will use Bruno collections for scriptable HTTP-level E2E and smoke checks that can be run locally by maintainers and by Codex. Bruno tests cover public route availability, API-shaped route handlers, health checks, and deployment-facing request/response behavior.
+Senja Malere V1 will use Bruno collections for scriptable HTTP-level E2E and smoke checks that can be run locally by maintainers and by Codex. The current collection verifies the deployment-facing homepage response. Public route availability, API-shaped route handlers, and future health checks should be added to the same collection as those checks become operationally valuable.
 
 Jest with React Testing Library remains the default harness for component behavior, validation helpers, Server Action boundaries, auth/session helpers, and browser-local interactions such as form draft persistence. Bruno should not be used to test browser-only UI behavior, and it should not depend on private Next.js Server Action transport details.
 

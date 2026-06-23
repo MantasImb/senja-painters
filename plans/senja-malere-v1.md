@@ -14,16 +14,16 @@ Repo facts:
 PRD requirements:
 
 - Build a Norwegian-first public website for Senja Malere, focused on Senja and Finnsnes.
-- Store submitted leads in Railway Postgres using Prisma.
+- Store submitted Painting Leads in Railway Postgres using Prisma.
 - Protect the internal admin dashboard with one environment-based admin password.
 - Keep content static in code for V1.
 - Track V1 analytics through a small internal observability module.
 - Avoid unsupported business claims such as fake reviews, fake address, organization number, opening hours, certifications, or years in business.
 
-Inference:
+Current implementation state:
 
-- The implementation should start from a minimal app structure and grow in vertical slices. Early phases should establish real user paths before adding operational depth.
-- Because this repo has no current data or auth boundaries, the plan should not assume existing internal helpers or module names.
+- The repository has working public Painting Lead, admin authentication, status workflow, spam protection, analytics, public content, and SEO boundaries.
+- The remaining phases are retained as an implementation record and verification checklist, not as evidence that unchecked functionality is absent.
 
 ## Architectural decisions
 
@@ -39,7 +39,7 @@ Durable decisions that apply across all phases:
 - **Public contact**: Public contact is form-only. V1 does not show a public phone number or public email address.
 - **Lead form**: The shared compact form appears on major public pages and collects required name, phone, area/city, service type, project description, and consent. Email, property type, and desired timeframe are optional.
 - **Draft behavior**: Lead form drafts persist in localStorage, but consent is not silently restored as checked. Drafts clear after successful submission.
-- **Lead storage**: Prisma is used to store leads in Railway Postgres.
+- **Painting Lead storage**: Prisma is used to store Painting Leads in Railway Postgres.
 - **Schema migrations**: Prisma schema and committed `prisma/migrations` files are the database schema source of truth. Local schema changes use Prisma Migrate, and deployed environments apply pending migrations with `bunx prisma migrate deploy`.
 - **Database boundary**: Application code accesses Prisma through a single server-only database module, such as `lib/db.ts`. UI components do not import Prisma directly.
 - **Project structure**: Keep the App Router at root `app/`. Shared UI primitives live in `components/ui/`, public site sections in `components/site/`, form UI in `components/forms/`, server and domain utilities in `lib/`, and Prisma schema/migrations in `prisma/`. V1 does not introduce a `src/` directory.
@@ -60,7 +60,7 @@ Durable decisions that apply across all phases:
 - **Privacy**: Analytics and rate limiting store hashed or anonymized IP information and session-scoped browser attribution IDs for best-effort grouping, not raw IP addresses.
 - **Browser attribution**: Browser analytics identifiers are scoped to the current browser session and stored as session data, not as a persistent cross-session analytics identifier before consent.
 - **IP identity**: IP identity is derived from the best trusted Vercel/request client IP signal available to the server, such as Vercel-overwritten `x-forwarded-for` or a platform helper. The raw IP value is used only in memory to compute the hash and is never persisted. If no client IP can be determined, the submission uses a stable `unknown` rate-limit bucket.
-- **Spam protection**: V1 uses a honeypot field and IP-hash rate limiting of 3 successful submissions per hashed IP per 24 hours. Filled honeypot submissions are stored in a separate HoneypotSubmission table for spam monitoring and never create or mutate records in the main Lead table. Honeypot-triggered submissions return the same success response as valid submissions, while only writing to HoneypotSubmission. HoneypotSubmission stores submitted form fields, source page, filled honeypot value, user agent, hashed IP identity, and created timestamp, but not raw IP addresses. When the rate limit is exceeded, the form returns a generic failure message without revealing rate-limit internals. Rate-limited submissions do not create Lead or HoneypotSubmission records; RateLimitEntry keeps an aggregate blocked-submission counter for the current hashed identity/window. Third-party anti-spam widgets are out of scope.
+- **Spam protection**: V1 uses a honeypot field and IP-hash rate limiting of 3 successful submissions per hashed IP in the preceding rolling 24 hours. Filled honeypot submissions are stored in a separate HoneypotSubmission table for spam monitoring and never create or mutate records in the main Lead table. Honeypot-triggered submissions return the same success response as valid submissions, while only writing to HoneypotSubmission. HoneypotSubmission stores submitted form fields, source page, filled honeypot value, user agent, hashed IP identity, and created timestamp, but not raw IP addresses. When the rate limit is exceeded, the form returns a generic failure message without revealing rate-limit internals. Rate-limited submissions do not create Lead or HoneypotSubmission records; RateLimitEntry timestamps successful and blocked attempts for rolling-window and aggregate-pressure calculations. Third-party anti-spam widgets are out of scope.
 - **SEO**: V1 includes unique page titles, meta descriptions, canonical URLs, Open Graph metadata, sitemap, robots, WebSite JSON-LD, and a simple LocalBusiness JSON-LD graph when verified business facts are available.
 - **SEO restraint**: LocalBusiness structured data may describe Senja Malere as a service-area business with `areaServed` and no physical address. It may include service area and the V1 painting services, but omits opening hours unless they are also made visible in public page content. The site should not assume eligibility for Google LocalBusiness rich results that require an address. V1 excludes fake reviews, ratings, fake address, organization number, fake opening hours, public phone, public email, certifications, and Google Business Profile links before those facts are real, public, and supported by visible site content.
 - **Content**: Content is static in code. V1 copy is organized in typed static content modules, such as `lib/content/`, rather than being hardcoded directly across page components. This keeps Norwegian-first content easy to review and gives V2 a cleaner migration path to `next-intl` message files. No CMS, admin content editing, blog, or gallery system is included in V1.
@@ -73,9 +73,9 @@ Durable decisions that apply across all phases:
 - **Public rendering**: Public SEO pages should remain static and prerenderable as much as possible. Public page rendering should avoid request-time database reads, cookies, headers, or analytics writes that force dynamic rendering. Admin pages and mutation endpoints may be dynamic.
 - **Client islands**: SEO pages use a prerendered Server Component shell with selective Client Components for browser-only behavior such as lead-form draft persistence and analytics beacons.
 - **Validation boundary**: Zod validates Server Action inputs and environment variables. Zod schemas are authoritative before writes and protected mutations, and app-owned validation messaging is preferred where native browser validation UI cannot be made readable and consistent.
-- **Environment boundary**: Environment variables are parsed through a centralized Zod-backed module, such as `lib/env.ts`, which exposes typed server and public config values. Application code should not read `process.env` directly outside this boundary, except framework configuration files when needed.
+- **Environment boundary**: Environment variables are parsed through a centralized Zod-backed module, such as `lib/env.ts`, which exposes typed server and public config values. Application code should not read `process.env` directly outside this boundary. Build/framework configuration may read it directly, while runtime checks such as `NODE_ENV` are exposed through helpers in `lib/env.ts`.
 - **Form validation presentation**: Server-side Zod schemas are authoritative for lead and admin form validation. The public lead form and admin login form use app-owned inline validation instead of native browser validation popovers, because native popovers are not reliably styleable and caused unreadable contrast in the accepted UI.
-- **Test foundation**: V1 uses Jest with `next/jest`, `jest-environment-jsdom`, React Testing Library, `@testing-library/jest-dom`, and `@testing-library/user-event` for component behavior, validation helpers, Server Action boundaries, auth/session helpers, and browser-local interactions. Bruno collections provide scriptable HTTP-level E2E and smoke automation for public route availability, API-shaped route handlers, health checks, and deployment-facing request/response behavior. Tests should prefer accessible, user-facing queries and behavior assertions where UI is involved; browser-level E2E coverage is deferred until route smoke tests or async Server Component flows justify it.
+- **Test foundation**: V1 uses Jest with `next/jest`, `jest-environment-jsdom`, React Testing Library, `@testing-library/jest-dom`, and `@testing-library/user-event` for component behavior, validation helpers, Server Action boundaries, auth/session helpers, and browser-local interactions. The current Bruno collection provides a deployment-facing homepage smoke check; additional public-route, API-handler, and health checks can be added when operationally useful. Tests should prefer accessible, user-facing queries and behavior assertions where UI is involved; browser-level E2E coverage is deferred until route smoke tests or async Server Component flows justify it.
 - **Package manager**: Bun is used for dependency installation, lockfile management, and project scripts. `bun.lock` is the source-of-truth lockfile, and npm, pnpm, or Yarn lockfiles should not be introduced.
 - **Deferred workflows**: English routes, Google Business Profile support, partner accounts, lead assignment, notes, export, search, email notifications, payments, quotes, scheduling, and calendar workflows are out of scope for V1.
 
@@ -87,39 +87,39 @@ Durable decisions that apply across all phases:
 
 ### What to build
 
-Replace the starter homepage with a Norwegian Senja Malere landing page and build the minimal internal admin path needed to operate real leads from day one. The slice should include the compact lead form, client-side draft persistence, validation, explicit consent handling, Prisma-backed lead creation, source-page capture, draft clearing, spam controls, and a clear confirmation that Senja Malere will contact the customer to clarify the project and next steps.
+Replace the starter homepage with a Norwegian Senja Malere landing page and build the minimal internal admin path needed to operate real Painting Leads from day one. The slice should include the compact lead form, client-side draft persistence, validation, explicit consent handling, Prisma-backed Painting Lead creation, source-page capture, draft clearing, spam controls, and a clear confirmation that Senja Malere will contact the Homeowner to clarify the Painting Project and next steps.
 
-The admin slice should include password login, signed admin session, protected dashboard, newest-first lead list, status filters, lead detail, status updates with status history, and a simple analytics summary for the metrics already decided. It should not add notes, export, search, partner assignment, email notifications, or a full honeypot inbox.
+The admin slice should include password login, signed admin session, protected dashboard, newest-first Painting Lead list, status filters, Painting Lead detail, status updates with status history, and a simple analytics summary for the metrics already decided. It should not add notes, export, search, partner assignment, email notifications, or a full honeypot inbox.
 
 The confirmation copy should avoid promising a specific response time.
 
 This phase should establish the V1 database shape needed for leads, status history, analytics events, rate limiting, and honeypot monitoring. Public SEO page expansion can still happen after the operational lead/admin path exists.
 
-Implementation note: Phase 1 has been implemented in the current branch. The manual QA guide in `docs/phase-1-qa.md` tracks the inspection path and known follow-up checks.
+Implementation note: Phase 1 is implemented. The manual QA guide in `docs/v1-qa.md` tracks the current inspection path.
 
 ### Acceptance criteria
 
-- [ ] The homepage renders Norwegian Senja Malere content instead of starter-template content.
-- [ ] The homepage presents Senja Malere as a local painting business serving Senja and Finnsnes.
-- [ ] The compact lead form includes all required and optional V1 lead fields.
-- [ ] Email can be omitted while the form still submits successfully.
-- [ ] Name, phone, area/city, service type, project description, and consent are required.
-- [ ] Consent requires an intentional action and is not restored as checked after reload.
-- [ ] Non-consent draft fields persist when navigating or reloading before submission.
-- [ ] A successful submission stores a lead in the database with the correct source page.
-- [ ] The form draft clears after successful submission.
-- [ ] The customer sees a confirmation after submission.
-- [ ] Confirmation copy does not promise a specific response time.
-- [ ] Admin routes are inaccessible without login.
-- [ ] A valid `ADMIN_PASSWORD` grants access to the admin dashboard.
-- [ ] An invalid password does not grant access.
-- [ ] Leads appear newest first in the admin dashboard.
-- [ ] Admin users can filter leads by status.
-- [ ] Admin users can open a lead detail view with submitted contact and project information.
-- [ ] Admin users can update lead status to new, contacted, sent_to_partner, closed, or spam.
-- [ ] Status updates persist and create LeadStatusEvent records.
-- [ ] Simple admin analytics shows total page views, total leads, conversion rate, views by page, leads by source page, honeypot submission count, rate-limited submission count, and recent events for the selected timeframe.
-- [ ] Tests cover required fields, optional email, consent, source-page capture, persistence, successful lead creation, draft clearing, admin login, protected admin access, lead review, status updates, and simple analytics summary behavior.
+- [x] The homepage renders Norwegian Senja Malere content instead of starter-template content.
+- [x] The homepage presents Senja Malere as a local painting business serving Senja and Finnsnes.
+- [x] The compact lead form includes all required and optional V1 lead fields.
+- [x] Email can be omitted while the form still submits successfully.
+- [x] Name, phone, area/city, service type, project description, and consent are required.
+- [x] Consent requires an intentional action and is not restored as checked after reload.
+- [x] Non-consent draft fields persist when navigating or reloading before submission.
+- [x] A successful submission stores a lead in the database with the correct source page.
+- [x] The form draft clears after successful submission.
+- [x] The homeowner sees a confirmation after submission.
+- [x] Confirmation copy does not promise a specific response time.
+- [x] Admin routes are inaccessible without login.
+- [x] A valid `ADMIN_PASSWORD` grants access to the admin dashboard.
+- [x] An invalid password does not grant access.
+- [x] Painting Leads appear newest first in the admin dashboard.
+- [x] The Site Owner can filter Painting Leads by status.
+- [x] The Site Owner can open a Painting Lead detail view with submitted contact and project information.
+- [x] The Site Owner can update Painting Lead status to new, contacted, sent_to_partner, closed, or spam.
+- [x] Status updates persist and create LeadStatusEvent records.
+- [x] Simple admin analytics shows total page views, total leads, conversion rate, views by page, leads by source page, honeypot submission count, rate-limited submission count, and recent events for the selected timeframe.
+- [x] Tests cover required fields, optional email, consent, source-page capture, persistence, successful lead creation, draft clearing, admin login, protected admin access, lead review, status updates, and simple analytics summary behavior.
 
 ---
 
@@ -135,15 +135,15 @@ The location and service pages should be locally useful rather than thin duplica
 
 ### Acceptance criteria
 
-- [ ] Senja and Finnsnes location pages exist with distinct Norwegian local content.
-- [ ] Innvendig maling, utvendig maling, and møbelmaling service pages exist with distinct Norwegian service content.
-- [ ] The Kontakt page provides the same form-only contact path without showing a public phone number or email address.
-- [ ] The Personvern page explains what information is collected, why it is collected, and how analytics and rate limiting avoid raw IP storage.
-- [ ] Major public pages include the compact full lead form.
-- [ ] Leads submitted from each major page capture the correct source page.
-- [ ] The navigation lets visitors reach the core location, service, contact, and privacy pages.
-- [ ] The page designs can accept real project photos later without using fake, stock, or unsupported project imagery in V1.
-- [ ] Tests verify that core pages render expected Norwegian headings, service or location positioning, and the lead form.
+- [x] Senja and Finnsnes location pages exist with distinct Norwegian local content.
+- [x] Innvendig maling, utvendig maling, and møbelmaling service pages exist with distinct Norwegian service content.
+- [x] The Kontakt page provides the same form-only contact path without showing a public phone number or email address.
+- [x] The Personvern page explains what information is collected, why it is collected, and how analytics and rate limiting avoid raw IP storage.
+- [x] Major public pages include the compact full lead form.
+- [x] Painting Leads submitted from each major page capture the correct source page.
+- [x] The navigation lets visitors reach the core location, service, contact, and privacy pages.
+- [x] The page designs can accept verified real project photos later without using fake, stock, or unsupported project imagery in V1.
+- [x] Tests verify that core pages render expected Norwegian headings, service or location positioning, and the lead form.
 
 ---
 
@@ -159,16 +159,16 @@ This phase should include WebSite JSON-LD and a simple service-area LocalBusines
 
 ### Acceptance criteria
 
-- [ ] Each public page has a unique Norwegian title and meta description.
-- [ ] Canonical URLs are generated from `NEXT_PUBLIC_SITE_URL`.
-- [ ] Open Graph metadata is present and aligned with each page.
-- [ ] Sitemap includes all V1 public pages.
-- [ ] Robots behavior is defined for public and admin routes.
-- [ ] WebSite JSON-LD is present.
-- [ ] LocalBusiness JSON-LD is present as a service-area business with `areaServed` and V1 painting services.
-- [ ] LocalBusiness JSON-LD omits opening hours unless those hours are also visible in public page content.
-- [ ] Metadata does not include fake reviews, ratings, fake address, organization number, fake opening hours, public phone, public email, certifications, or Google Business Profile links.
-- [ ] Tests verify titles, descriptions, canonical metadata, sitemap behavior, robots behavior, and structured-data restraint.
+- [x] Each public page has a unique Norwegian title and meta description.
+- [x] Canonical URLs are generated from `NEXT_PUBLIC_SITE_URL`.
+- [x] Open Graph metadata is present and aligned with each page.
+- [x] Sitemap includes all V1 public pages.
+- [x] Robots behavior is defined for public and admin routes.
+- [x] WebSite JSON-LD is present.
+- [x] LocalBusiness JSON-LD is present as a service-area business with `areaServed` and V1 painting services.
+- [x] LocalBusiness JSON-LD omits opening hours unless those hours are also visible in public page content.
+- [x] Metadata does not include fake reviews, ratings, fake address, organization number, fake opening hours, public phone, public email, certifications, or Google Business Profile links.
+- [x] Tests verify titles, descriptions, canonical metadata, sitemap behavior, robots behavior, and structured-data restraint.
 
 ---
 
@@ -178,7 +178,7 @@ This phase should include WebSite JSON-LD and a simple service-area LocalBusines
 
 ### What to build
 
-Review and harden the admin path introduced in Phase 1. An internal user can log in with the environment-based admin password, reach a protected dashboard, see submitted leads sorted newest first, filter by status, and open a lead detail view.
+Review and harden the admin path introduced in Phase 1. The Site Owner can log in with the environment-based admin password, reach a protected dashboard, see submitted Painting Leads sorted newest first, filter by status, and open a Painting Lead detail view.
 
 This phase should not add new admin product scope. It should close gaps left by Phase 1, improve tests, and keep notes, search, export, partner assignment, email notifications, and a full honeypot inbox out of V1.
 
@@ -188,9 +188,9 @@ This phase should not add new admin product scope. It should close gaps left by 
 - [x] A valid `ADMIN_PASSWORD` grants access to the admin dashboard.
 - [x] An invalid password does not grant access.
 - [x] Session behavior uses `SESSION_SECRET`.
-- [x] Leads appear newest first in the admin dashboard.
-- [x] Admin users can filter leads by status.
-- [x] Admin users can open a lead detail view with submitted contact and project information.
+- [x] Painting Leads appear newest first in the admin dashboard.
+- [x] The Site Owner can filter Painting Leads by status.
+- [x] The Site Owner can open a Painting Lead detail view with submitted contact and project information.
 - [x] No AdminUser model is introduced.
 - [x] Tests cover inaccessible dashboard, valid login, invalid login, newest-first ordering, status filters, and lead detail visibility.
 
@@ -202,7 +202,7 @@ This phase should not add new admin product scope. It should close gaps left by 
 
 ### What to build
 
-Review and harden the lead status workflow introduced in Phase 1. Each status change should persist the new status and create a status-history event so the owner can see when the lead changed state.
+Review and harden the Painting Lead status workflow introduced in Phase 1. Each status change should persist the new status and create a status-history event so the Site Owner can see when the Painting Lead changed state.
 
 This phase should use only the approved V1 status values and should not add partner assignment, admin notes, search, or export.
 
@@ -210,7 +210,7 @@ The `sent_to_partner` status is only a manual label and must not introduce partn
 
 ### Acceptance criteria
 
-- [x] Admin users can update a lead status to new, contacted, sent_to_partner, closed, or spam.
+- [x] The Site Owner can update a Painting Lead status to new, contacted, sent_to_partner, closed, or spam.
 - [x] Status updates persist and are visible after reload.
 - [x] Each status change creates a LeadStatusEvent.
 - [x] Lead detail shows status history in chronological or reverse-chronological order.
@@ -226,30 +226,30 @@ The `sent_to_partner` status is only a manual label and must not introduce partn
 
 ### What to build
 
-Add basic V1 spam protection to the public submission path while keeping data collection restrained. The form should include a honeypot field, and repeated submissions from the same hashed IP identity should be rate limited to 3 successful submissions per 24 hours. Filled honeypot submissions should be stored separately from real leads so the owner can monitor spam pressure without polluting the lead workflow. The implementation should persist rate-limit entries without storing raw IP addresses.
+Add basic V1 spam protection to the public submission path while keeping data collection restrained. The form should include a honeypot field, and repeated submissions from the same hashed IP identity should be rate limited to 3 successful submissions in the preceding rolling 24 hours. Each successful or blocked attempt is timestamped in `RateLimitEntry`, allowing the rolling boundary to be evaluated without storing raw IP addresses. Filled honeypot submissions should be stored separately from real Painting Leads so the Site Owner can monitor spam pressure without polluting the lead workflow.
 
 This phase should protect the lead database without introducing reCAPTCHA, Cloudflare Turnstile, or any third-party anti-spam widget.
 
 ### Acceptance criteria
 
-- [ ] Public forms include a honeypot field that normal users do not interact with.
-- [ ] Honeypot submissions create HoneypotSubmission records without creating valid leads.
-- [ ] HoneypotSubmission records do not appear in the main lead workflow.
-- [ ] Honeypot-triggered submissions return the same success response as valid submissions.
-- [ ] HoneypotSubmission stores submitted form fields, source page, filled honeypot value, user agent, hashed IP identity, and created timestamp.
-- [ ] HoneypotSubmission does not store raw IP addresses.
-- [ ] Repeated submissions from the same hashed identity are rate limited.
-- [ ] The rate limit allows 3 successful submissions per hashed IP per 24 hours.
-- [ ] Rate-limit failures return a generic message without exposing rate-limit internals.
-- [ ] Rate-limited submissions do not create Lead or HoneypotSubmission records.
-- [ ] RateLimitEntry keeps an aggregate blocked-submission counter for the current hashed identity/window.
-- [ ] Normal submissions are not blocked unnecessarily.
-- [ ] RateLimitEntry stores hashed identity data only.
-- [ ] IP identity is derived from a trusted Vercel/request client IP signal when available.
-- [ ] Raw IP values are used only in memory to compute hashed identity and are never persisted.
-- [ ] Requests without a determinable client IP use a stable `unknown` rate-limit bucket.
-- [ ] Raw IP addresses are not stored in leads, rate-limit entries, or analytics events.
-- [ ] Tests cover honeypot handling, rate limiting, normal submission behavior, and raw-IP privacy.
+- [x] Public forms include a honeypot field that normal visitors do not interact with.
+- [x] Honeypot submissions create HoneypotSubmission records without creating valid Painting Leads.
+- [x] HoneypotSubmission records do not appear in the main Painting Lead workflow.
+- [x] Honeypot-triggered submissions return the same success response as valid submissions.
+- [x] HoneypotSubmission stores submitted form fields, source page, filled honeypot value, user agent, hashed IP identity, and created timestamp.
+- [x] HoneypotSubmission does not store raw IP addresses.
+- [x] Repeated submissions from the same hashed identity are rate limited.
+- [x] The rate limit allows 3 successful submissions per hashed IP in the preceding rolling 24 hours.
+- [x] Rate-limit failures return a generic message without exposing rate-limit internals.
+- [x] Rate-limited submissions do not create Lead or HoneypotSubmission records.
+- [x] RateLimitEntry timestamps successful and blocked attempts so aggregate pressure and the rolling window can be calculated.
+- [x] Normal submissions are not blocked unnecessarily.
+- [x] RateLimitEntry stores hashed identity data only.
+- [x] IP identity is derived from a trusted Vercel/request client IP signal when available.
+- [x] Raw IP values are used only in memory to compute hashed identity and are never persisted.
+- [x] Requests without a determinable client IP use a stable `unknown` rate-limit bucket.
+- [x] Raw IP addresses are not stored in Painting Leads, rate-limit entries, or analytics events.
+- [x] Tests cover honeypot handling, rolling rate limiting, normal submission behavior, and raw-IP privacy boundaries.
 
 ---
 
@@ -265,16 +265,16 @@ This phase should keep analytics internal and Prisma-backed. Google Analytics, P
 
 ### Acceptance criteria
 
-- [ ] Analytics is isolated behind a small internal observability module.
-- [ ] Page views are tracked for public pages without forcing public SEO pages into dynamic rendering.
-- [ ] Lead submissions are tracked after successful lead creation.
-- [ ] Admin login success and failure are tracked.
-- [ ] Lead status changes are tracked.
-- [ ] AnalyticsEvent stores hashed or anonymized IP information and session-scoped browser attribution data only.
-- [ ] Admin analytics shows total page views, total leads, and conversion rate.
-- [ ] Admin analytics supports last 7 days, last 30 days, and all-time filters.
-- [ ] Admin analytics shows views by page, leads by source page, and recent events.
-- [ ] Admin analytics shows aggregate honeypot submission counts.
-- [ ] Admin analytics shows aggregate rate-limited submission counts.
-- [ ] V1 does not include a full honeypot submission inbox.
-- [ ] Tests cover page-view tracking, lead-submission tracking, conversion-rate calculation, timeframe filters, grouped metrics, recent events, and raw-IP privacy.
+- [x] Analytics is isolated behind a small internal observability module.
+- [x] Page views are tracked for public pages without forcing public SEO pages into dynamic rendering.
+- [x] Painting Lead submissions are tracked after successful Painting Lead creation.
+- [x] Admin login success and failure are tracked.
+- [x] Painting Lead status changes are tracked.
+- [x] AnalyticsEvent stores hashed or anonymized IP information and session-scoped browser attribution data only.
+- [x] Admin analytics shows total page views, total Painting Leads, and conversion rate.
+- [x] Admin analytics supports last 7 days, last 30 days, and all-time filters.
+- [x] Admin analytics shows views by page, Painting Leads by source page, and recent events.
+- [x] Admin analytics shows aggregate honeypot submission counts.
+- [x] Admin analytics shows aggregate rate-limited submission counts.
+- [x] V1 does not include a full honeypot submission inbox.
+- [x] Tests cover page-view tracking, Painting Lead submission tracking, conversion-rate calculation, timeframe filters, grouped metrics, recent events, and raw-IP privacy boundaries.
