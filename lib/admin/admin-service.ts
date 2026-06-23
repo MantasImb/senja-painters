@@ -1,4 +1,11 @@
-import { leadStatuses, type LeadStatus } from "@/lib/lead-submission";
+import { z } from "zod";
+
+import { leadStatusSchema, type LeadStatus } from "@/lib/lead-submission";
+
+const leadStatusUpdateSchema = z.object({
+  leadId: z.string().trim().min(1),
+  newStatus: leadStatusSchema,
+});
 
 export type AdminLeadListItem = {
   id: string;
@@ -14,7 +21,6 @@ export type AdminLeadListItem = {
 export type AdminLeadRepository = {
   changeLeadStatus(input: {
     leadId: string;
-    previousStatus: LeadStatus;
     newStatus: LeadStatus;
     changedAt: Date;
   }): Promise<void>;
@@ -66,14 +72,9 @@ export function listAdminLeads(
 }
 
 export async function updateLeadStatus(
-  {
-    leadId,
-    newStatus,
-    previousStatus,
-  }: {
+  input: {
     leadId: string;
     newStatus: string;
-    previousStatus: LeadStatus;
   },
   {
     changedAt,
@@ -83,15 +84,16 @@ export async function updateLeadStatus(
     repository: AdminLeadRepository;
   },
 ) {
-  if (!isLeadStatus(newStatus)) {
-    throw new Error(`Unsupported lead status: ${newStatus}`);
+  const parsed = leadStatusUpdateSchema.safeParse(input);
+
+  if (!parsed.success) {
+    throw new Error("Unsupported lead status update");
   }
 
   await repository.changeLeadStatus({
     changedAt,
-    leadId,
-    newStatus,
-    previousStatus,
+    leadId: parsed.data.leadId,
+    newStatus: parsed.data.newStatus,
   });
 }
 
@@ -155,8 +157,4 @@ function getTimeframeStart(now: Date, timeframe: AnalyticsTimeframe) {
 
   const days = timeframe === "7d" ? 7 : 30;
   return new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
-}
-
-function isLeadStatus(status: string): status is LeadStatus {
-  return leadStatuses.includes(status as LeadStatus);
 }

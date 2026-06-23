@@ -210,13 +210,13 @@ The `sent_to_partner` status is only a manual label and must not introduce partn
 
 ### Acceptance criteria
 
-- [ ] Admin users can update a lead status to new, contacted, sent_to_partner, closed, or spam.
-- [ ] Status updates persist and are visible after reload.
-- [ ] Each status change creates a LeadStatusEvent.
-- [ ] Lead detail shows status history in chronological or reverse-chronological order.
-- [ ] Status filters reflect updated lead states.
-- [ ] Invalid or unsupported status values are rejected.
-- [ ] Tests cover status updates, persistence, history creation, filter behavior, and unsupported status rejection.
+- [x] Admin users can update a lead status to new, contacted, sent_to_partner, closed, or spam.
+- [x] Status updates persist and are visible after reload.
+- [x] Each status change creates a LeadStatusEvent.
+- [x] Lead detail shows status history in chronological or reverse-chronological order.
+- [x] Status filters reflect updated lead states.
+- [x] Invalid or unsupported status values are rejected.
+- [x] Tests cover status updates, persistence, history creation, filter behavior, and unsupported status rejection.
 
 ---
 

@@ -211,6 +211,12 @@ describe("admin pages", () => {
       projectDescription: "Male kjøkkenfronter og et skap.",
       statusEvents: [
         {
+          id: "event-2",
+          previousStatus: "new",
+          newStatus: "contacted",
+          changedAt: new Date("2026-06-13T12:00:00.000Z"),
+        },
+        {
           id: "event-1",
           previousStatus: null,
           newStatus: "new",
@@ -236,5 +242,11 @@ describe("admin pages", () => {
     expect(
       screen.getByText("Male kjøkkenfronter og et skap."),
     ).toBeInTheDocument();
+    expect(
+      screen.getAllByText(/→/).map((event) => event.textContent),
+    ).toEqual(["new → contacted", "opprettet → new"]);
+    expect(
+      screen.getAllByRole("option").map((option) => option.textContent),
+    ).toEqual(["new", "contacted", "sent_to_partner", "closed", "spam"]);
   });
 });

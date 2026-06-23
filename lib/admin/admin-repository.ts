@@ -79,37 +79,58 @@ export function createPrismaAdminLeadRepository(db: PrismaClient = getDb()) {
       changedAt,
       leadId,
       newStatus,
-      previousStatus,
     }: {
       leadId: string;
-      previousStatus: LeadStatus;
       newStatus: LeadStatus;
       changedAt: Date;
     }) {
-      await db.$transaction([
-        db.lead.update({
+      await db.$transaction(async (transaction) => {
+        const lead = await transaction.lead.findUnique({
+          select: {
+            status: true,
+          },
+          where: {
+            id: leadId,
+          },
+        });
+
+        if (!lead) {
+          throw new Error("Lead not found");
+        }
+
+        if (lead.status === newStatus) {
+          return;
+        }
+
+        await transaction.lead.update({
           data: {
             status: newStatus,
           },
           where: {
             id: leadId,
           },
-        }),
-        db.leadStatusEvent.create({
+        });
+        await transaction.leadStatusEvent.create({
           data: {
             changedAt,
             leadId,
             newStatus,
-            previousStatus,
+            previousStatus: lead.status,
           },
-        }),
-        createAnalyticsEvent(db, {
+        });
+        await createAnalyticsEvent(transaction, {
           createdAt: changedAt,
-          metadata: { leadId, newStatus, previousStatus },
+          metadata: {
+            leadId,
+            newStatus,
+            previousStatus: lead.status,
+          },
           name: "lead_status_changed",
           page: "/admin",
-        }),
-      ]);
+        });
+      }, {
+        isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+      });
     },
   };
 }
