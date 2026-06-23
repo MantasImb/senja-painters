@@ -39,6 +39,7 @@ import {
 } from "@/lib/admin/admin-repository";
 import AdminDashboardPage from "./page";
 import AdminLeadDetailPage from "./leads/[id]/page";
+import AdminLoginPage from "./login/page";
 import { redirect } from "next/navigation";
 
 const redirectMock = jest.mocked(redirect);
@@ -120,6 +121,20 @@ describe("admin pages", () => {
     expect(redirectMock).toHaveBeenCalledWith("/admin/login");
   });
 
+  it("renders the admin password control with an explicit readable color", async () => {
+    render(
+      await AdminLoginPage({
+        searchParams: Promise.resolve({}),
+      }),
+    );
+
+    expect(screen.getByLabelText("Passord")).toHaveClass(
+      "bg-white",
+      "text-neutral-950",
+      "caret-neutral-950",
+    );
+  });
+
   it("renders authenticated dashboard leads for the selected status filter", async () => {
     mockAdminCookieValue = createAdminSessionCookieValue({
       now: new Date(),
@@ -162,6 +177,18 @@ describe("admin pages", () => {
     expect(
       within(rows[1]).getByRole("link", { name: /åpne/i }),
     ).toHaveAttribute("href", "/admin/leads/lead-newer");
+    expect(screen.getByRole("link", { name: "7 dager" })).toHaveClass(
+      "bg-neutral-950",
+      "text-white",
+    );
+    expect(screen.getByRole("link", { name: "30 dager" })).toHaveClass(
+      "bg-white",
+      "text-neutral-950",
+    );
+    expect(screen.getByRole("link", { name: "contacted" })).toHaveClass(
+      "bg-neutral-950",
+      "text-white",
+    );
   });
 
   it("shows submitted contact and project information on the lead detail page", async () => {

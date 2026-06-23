@@ -36,7 +36,12 @@ export default async function AdminLeadDetailPage({
   return (
     <main className="min-h-screen bg-neutral-100 px-5 py-8 text-neutral-950 sm:px-8">
       <div className="mx-auto max-w-5xl">
-        <Button asChild size="sm" variant="link">
+        <Button
+          asChild
+          className="text-neutral-950 hover:text-neutral-700"
+          size="sm"
+          variant="link"
+        >
           <Link href="/admin">Tilbake til admin</Link>
         </Button>
         <header className="mt-6 border-b border-neutral-300 pb-6">
@@ -52,7 +57,7 @@ export default async function AdminLeadDetailPage({
         </header>
 
         <section className="mt-8 grid gap-6 lg:grid-cols-[1fr_0.75fr]">
-          <Card className="rounded-[8px] border-neutral-300 bg-white">
+          <Card className="rounded-[8px] border-neutral-300 bg-white text-neutral-950">
             <CardHeader>
               <CardTitle className="text-2xl font-semibold">
                 Forespørsel
@@ -86,12 +91,15 @@ export default async function AdminLeadDetailPage({
             </CardContent>
           </Card>
 
-          <Card className="rounded-[8px] border-neutral-300 bg-white">
+          <Card className="rounded-[8px] border-neutral-300 bg-white text-neutral-950">
             <CardHeader>
               <CardTitle className="text-2xl font-semibold">Status</CardTitle>
               <p className="text-sm text-neutral-600">
                 Nåværende status:{" "}
-                <Badge className="rounded-[6px]" variant="secondary">
+                <Badge
+                  className="rounded-[6px] bg-neutral-200 text-neutral-950"
+                  variant="secondary"
+                >
                   {lead.status}
                 </Badge>
               </p>
