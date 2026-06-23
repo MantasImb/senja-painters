@@ -29,7 +29,7 @@ describe("metadata routes", () => {
       rules: {
         userAgent: "*",
         allow: "/",
-        disallow: "/admin/",
+        disallow: "/admin",
       },
       sitemap: "https://senjamalere.no/sitemap.xml",
     });
