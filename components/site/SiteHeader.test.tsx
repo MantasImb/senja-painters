@@ -42,7 +42,7 @@ describe("SiteHeader", () => {
 
     expect(
       document.querySelector('[data-slot="navigation-menu-content"]'),
-    ).toHaveClass("!bg-white", "!text-neutral-950");
+    ).toHaveClass("bg-white!", "text-neutral-950!");
 
     window.scrollY = 48;
     fireEvent.scroll(window);

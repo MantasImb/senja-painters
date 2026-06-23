@@ -259,7 +259,7 @@ function LinkGroup({
       >
         {title}
       </NavigationMenuTrigger>
-      <NavigationMenuContent className="min-w-56 border border-neutral-200 !bg-white p-2 !text-neutral-950 shadow-lg shadow-black/10">
+      <NavigationMenuContent className="min-w-56 border border-neutral-200 bg-white! p-2 text-neutral-950! shadow-lg shadow-black/10">
         <div className="grid gap-1">
           {links.map((link) => (
             <NavigationMenuLink
