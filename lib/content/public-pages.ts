@@ -5,6 +5,33 @@ export type PublicRouteSeo = {
   seo: PageSeo;
 };
 
+export type PublicHomePageContent = PublicRouteSeo & {
+  areas: string[];
+  contact: {
+    eyebrow: string;
+    text: string;
+    title: string;
+  };
+  footerText: string;
+  hero: {
+    eyebrow: string;
+    kicker: string;
+    text: string;
+    title: string;
+  };
+  services: {
+    icon: "interior" | "exterior" | "furniture";
+    pathname: string;
+    text: string;
+    title: string;
+  }[];
+  servicesIntro: {
+    eyebrow: string;
+    text: string;
+    title: string;
+  };
+};
+
 export type PublicPageContent = {
   eyebrow: string;
   formTitle?: string;
@@ -20,6 +47,20 @@ export type PublicPageContent = {
 };
 
 export const publicHomePage = {
+  areas: ["Senja", "Finnsnes"],
+  contact: {
+    eyebrow: "Be om kontakt",
+    text: "Skjemaet samler det viktigste for en god første samtale. E-post er valgfritt, og kontakt går gjennom forespørselen.",
+    title: "Fortell oss kort om malejobben.",
+  },
+  footerText:
+    "Norsk først, lokalt rettet og bygget rundt forespørsler fra boligeiere på Senja og i Finnsnes.",
+  hero: {
+    eyebrow: "Senja Malere",
+    kicker: "Senja og Finnsnes",
+    text: "Lokalt malerarbeid starter best med en enkel avklaring. Fortell oss kort om prosjektet, så tar Senja Malere kontakt om omfang, tidspunkt og neste steg.",
+    title: "Malerhjelp for hjem på Senja og i Finnsnes.",
+  },
   pathname: "/no",
   seo: {
     title: "Senja Malere | Malerhjelp på Senja og i Finnsnes",
@@ -28,7 +69,32 @@ export const publicHomePage = {
     openGraphDescription:
       "Malerhjelp for hjem på Senja og i Finnsnes, med en enkel forespørselsvei.",
   },
-} satisfies PublicRouteSeo;
+  services: [
+    {
+      icon: "interior",
+      pathname: "/no/innvendig-maling",
+      text: "Vegger, tak, listverk og rom som trenger en ryddig overflate og et pent sluttresultat.",
+      title: "Innvendig maling",
+    },
+    {
+      icon: "exterior",
+      pathname: "/no/utvendig-maling",
+      text: "Fasader, kledning og detaljer der underlag, vær og forarbeid må vurderes før jobben planlegges.",
+      title: "Utvendig maling",
+    },
+    {
+      icon: "furniture",
+      pathname: "/no/mobelmaling",
+      text: "Maling av møbler, skap, dører og detaljer som trenger nytt uttrykk eller bedre finish.",
+      title: "Møbler og detaljer",
+    },
+  ],
+  servicesIntro: {
+    eyebrow: "Tjenester",
+    text: "Velg tjenesten som passer prosjektet for å lese mer om hva som bør avklares før Senja Malere tar kontakt.",
+    title: "Malerhjelp for hjem og detaljer.",
+  },
+} satisfies PublicHomePageContent;
 
 export const publicPages = {
   finnsnes: {

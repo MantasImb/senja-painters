@@ -10,14 +10,10 @@ import {
   isValidAdminPassword,
 } from "@/lib/admin/admin-session";
 import { requireAdminSession } from "@/lib/admin/admin-auth";
-import {
-  createPrismaAdminLeadRepository,
-  getAdminLeadDetail,
-} from "@/lib/admin/admin-repository";
+import { createPrismaAdminLeadRepository } from "@/lib/admin/admin-repository";
 import { recordAnalyticsEvent } from "@/lib/analytics/server";
 import { updateLeadStatus } from "@/lib/admin/admin-service";
-import { getServerEnv } from "@/lib/env";
-import { leadStatuses, type LeadStatus } from "@/lib/lead-submission";
+import { getServerEnv, isProductionEnvironment } from "@/lib/env";
 
 export async function loginAdminAction(formData: FormData) {
   const password = String(formData.get("password") ?? "");
@@ -42,7 +38,7 @@ export async function loginAdminAction(formData: FormData) {
     httpOnly: true,
     path: "/admin",
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: isProductionEnvironment(),
   });
 
   await recordAnalyticsEvent({
@@ -60,21 +56,10 @@ export async function updateLeadStatusAction(formData: FormData) {
   const leadId = String(formData.get("leadId") ?? "");
   const newStatus = String(formData.get("status") ?? "");
 
-  if (!isLeadStatus(newStatus)) {
-    throw new Error("Unsupported lead status");
-  }
-
-  const lead = await getAdminLeadDetail(leadId);
-
-  if (!lead) {
-    throw new Error("Lead not found");
-  }
-
   await updateLeadStatus(
     {
       leadId,
       newStatus,
-      previousStatus: lead.status,
     },
     {
       changedAt: new Date(),
@@ -85,8 +70,4 @@ export async function updateLeadStatusAction(formData: FormData) {
   revalidatePath("/admin");
   revalidatePath(`/admin/leads/${leadId}`);
   redirect(`/admin/leads/${leadId}`);
-}
-
-function isLeadStatus(status: string): status is LeadStatus {
-  return leadStatuses.includes(status as LeadStatus);
 }

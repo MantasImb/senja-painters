@@ -92,7 +92,7 @@ model RateLimitEntry {
   blockedSubmissionCount    Int      @default(0)
   updatedAt                 DateTime @updatedAt
 
-  @@unique([hashedIp, windowStart])
+  @@index([hashedIp, windowStart])
   @@index([windowStart])
 }
 

@@ -51,7 +51,6 @@ describe("updateLeadStatus", () => {
       {
         leadId: "lead_1",
         newStatus: "contacted",
-        previousStatus: "new",
       },
       {
         changedAt: new Date("2026-06-10T12:00:00.000Z"),
@@ -64,7 +63,6 @@ describe("updateLeadStatus", () => {
         changedAt: new Date("2026-06-10T12:00:00.000Z"),
         leadId: "lead_1",
         newStatus: "contacted",
-        previousStatus: "new",
       },
     ]);
   });
@@ -81,7 +79,6 @@ describe("updateLeadStatus", () => {
         {
           leadId: "lead_1",
           newStatus: "unsupported",
-          previousStatus: "new",
         },
         {
           changedAt: new Date("2026-06-10T12:00:00.000Z"),

@@ -118,6 +118,35 @@ describe("LeadForm", () => {
     expect(screen.getByLabelText(/samtykker/i)).not.toBeChecked();
   });
 
+  it("migrates drafts saved under the former English brand key", () => {
+    window.localStorage.setItem(
+      "senja-painters:lead-form-draft",
+      JSON.stringify({
+        name: "Kari Test",
+        phone: "900 00 000",
+      }),
+    );
+
+    render(
+      <LeadForm
+        action={async () => ({
+          ok: false,
+          message: "",
+          fieldErrors: {},
+          values: {},
+        })}
+        sourcePage="/no"
+        title="Start forespørselen"
+      />,
+    );
+
+    expect(screen.getByLabelText(/navn/i)).toHaveValue("Kari Test");
+    expect(window.localStorage.getItem(leadFormDraftStorageKey)).not.toBeNull();
+    expect(
+      window.localStorage.getItem("senja-painters:lead-form-draft"),
+    ).toBeNull();
+  });
+
   it("renders required native controls with explicit readable colors", () => {
     const action = jest.fn<ReturnType<LeadFormAction>, Parameters<LeadFormAction>>(
       async () => ({

@@ -4,15 +4,15 @@
 
 People in Senja and Finnsnes need a simple way to request professional painting help without calling around, comparing unclear options, or navigating a cluttered contractor website.
 
-Senja Malere needs a Norwegian-first website that can rank for local painting searches, present the new brand as ready for work, collect qualified painting leads through a form, and let an internal admin review those leads. The first version should be minimal, credible, SEO-conscious, and ready to expand later with more locations, English content, Google Business Profile support, and partner/painter workflows.
+Senja Malere needs a Norwegian-first website that can rank for local painting searches, present the new brand as ready for work, collect qualified Painting Leads through a form, and let the Site Owner review those Painting Leads. The first version should be minimal, credible, SEO-conscious, and ready to expand later with more locations, English content, Google Business Profile support, and partner/painter workflows.
 
 ## Solution
 
 Build a Norwegian-first Next.js website for the new brand **Senja Malere**, focused on painting services in Senja and Finnsnes.
 
-The public site will present Senja Malere as a local painting business, not as a generic referral marketplace. Users can submit painting requests through embedded forms on major pages and a dedicated contact page. Submitted leads are stored in a Railway Postgres database using Prisma.
+The public site will present Senja Malere as a local painting business, not as a generic referral marketplace. Visitors can submit painting requests through embedded forms on major pages and a dedicated contact page. Submitted Painting Leads are stored in a Railway Postgres database using Prisma.
 
-The internal admin dashboard will be protected by a single environment-based admin password. Admin users can review leads, update lead statuses, and see simple analytics for page views, leads, and conversion rate.
+The internal admin dashboard will be protected by a single environment-based admin password. The Site Owner can review Painting Leads, update Lead Statuses, and see simple analytics for page views, Painting Leads, and conversion rate.
 
 The first implementation slice should include both the public lead path and the minimal admin path needed to operate those leads. Admin should not be postponed behind the full public page set.
 
@@ -98,7 +98,7 @@ V1 will keep content static in code, use conservative SEO metadata, track analyt
 
 - Public contact is form-only. No public phone number or public email is shown in V1.
 
-- After form submission, the site tells the customer that the request was received and that Senja Malere will contact them to clarify the project and next steps. V1 does not promise a specific response time.
+- After form submission, the site tells the Homeowner that the request was received and that Senja Malere will contact them to clarify the Painting Project and next steps. V1 does not promise a specific response time.
 
 - V1 location pages are limited to:
   - Senja
@@ -166,7 +166,7 @@ V1 will keep content static in code, use conservative SEO metadata, track analyt
 
 - Zod is used for Server Action input validation and environment variable parsing. Server-side schemas are authoritative before Prisma writes or protected mutations run. The public lead form and admin login form render app-owned inline validation instead of native browser validation popovers so error text remains readable and consistent with the accepted UI.
 
-- Environment variables are parsed through a centralized Zod-backed module, such as `lib/env.ts`, which exposes typed server and public config values. Application code should not read `process.env` directly outside this boundary, except framework configuration files when needed.
+- Environment variables are parsed through a centralized Zod-backed module, such as `lib/env.ts`, which exposes typed server and public config values. Application code should not read `process.env` directly outside this boundary. Build/framework configuration may read it directly, while runtime checks such as `NODE_ENV` are exposed through helpers in `lib/env.ts`.
 
 - Bun is the project package manager for dependency installation, lockfile management, and scripts. The repository should keep `bun.lock` as the package-manager source of truth and avoid npm, pnpm, or Yarn lockfiles.
 
@@ -279,7 +279,7 @@ V1 will keep content static in code, use conservative SEO metadata, track analyt
 
 - Spam protection uses:
   - honeypot field
-  - IP-hash rate limiting of 3 successful submissions per hashed IP per 24 hours
+  - IP-hash rate limiting of 3 successful submissions per hashed IP in the preceding rolling 24 hours
 
 - Filled honeypot submissions are stored in a separate `HoneypotSubmission` table for spam monitoring and never create or mutate records in the main `Lead` table.
 
@@ -289,7 +289,7 @@ V1 will keep content static in code, use conservative SEO metadata, track analyt
 
 - When the rate limit is exceeded, the form returns a generic failure message without revealing rate-limit internals.
 
-- Rate-limited submissions do not create `Lead` or `HoneypotSubmission` records. `RateLimitEntry` keeps an aggregate blocked-submission counter for the current hashed identity/window so admin analytics can show rate-limit pressure without storing blocked submission payloads.
+- Rate-limited submissions do not create `Lead` or `HoneypotSubmission` records. `RateLimitEntry` timestamps successful and blocked attempts for a hashed identity so the rolling 24-hour count and aggregate blocked-submission pressure can be calculated without storing blocked submission payloads.
 
 - V1 SEO includes:
   - unique page titles
@@ -365,7 +365,7 @@ V1 will keep content static in code, use conservative SEO metadata, track analyt
   - browser attribution does not create a persistent cross-session identifier before consent
   - raw IP addresses are not stored
 
-- Database tests should verify Prisma model behavior around leads, status events, analytics events, and rate limit entries.
+- Repository contract tests should verify Prisma query and write shapes around Painting Leads, status events, analytics events, and rate-limit entries using lightweight Prisma-compatible fakes. Live database integration tests are deferred until the project has an isolated automated test database and cleanup strategy.
 
 - Privacy-related tests should verify that analytics and rate limiting use hashed IP values rather than raw IP storage, and that client-side analytics identifiers are treated as best-effort attribution rather than trustworthy person counts.
 
@@ -387,7 +387,7 @@ V1 will keep content static in code, use conservative SEO metadata, track analyt
 
 - CMS or admin content editing.
 
-- Multiple admin users.
+- Multiple Site Owners or admin accounts.
 
 - Painter/partner accounts.
 

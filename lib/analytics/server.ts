@@ -1,6 +1,9 @@
 import "server-only";
 
-import type { PrismaClient } from "@/lib/generated/prisma/client";
+import {
+  Prisma,
+  type PrismaClient,
+} from "@/lib/generated/prisma/client";
 import { getDb } from "@/lib/db";
 import { getServerEnv } from "@/lib/env";
 import { getClientIp, hashIpIdentity } from "@/lib/ip-identity";
@@ -40,7 +43,7 @@ export async function recordAnalyticsEvent(
 }
 
 export function createAnalyticsEvent(
-  db: PrismaClient,
+  db: PrismaClient | Prisma.TransactionClient,
   event: AnalyticsEventInput,
 ) {
   return db.analyticsEvent.create({

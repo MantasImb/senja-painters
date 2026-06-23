@@ -28,7 +28,8 @@ import {
   readCurrentAttribution,
 } from "@/lib/analytics/attribution";
 
-export const leadFormDraftStorageKey = "senja-painters:lead-form-draft";
+export const leadFormDraftStorageKey = "senja-malere:lead-form-draft";
+const legacyLeadFormDraftStorageKey = "senja-painters:lead-form-draft";
 
 export type LeadFormValues = {
   name: string;
@@ -100,6 +101,7 @@ export function LeadForm({
 
       if (result.ok) {
         window.localStorage.removeItem(leadFormDraftStorageKey);
+        window.localStorage.removeItem(legacyLeadFormDraftStorageKey);
         setValues(emptyValues);
       }
 
@@ -141,6 +143,7 @@ export function LeadForm({
     }
 
     window.localStorage.setItem(leadFormDraftStorageKey, JSON.stringify(values));
+    window.localStorage.removeItem(legacyLeadFormDraftStorageKey);
   }, [values]);
 
   const statusClassName = useMemo(
@@ -406,7 +409,9 @@ function readDraft(): LeadFormValues {
     return emptyValues;
   }
 
-  const rawDraft = window.localStorage.getItem(leadFormDraftStorageKey);
+  const rawDraft =
+    window.localStorage.getItem(leadFormDraftStorageKey) ??
+    window.localStorage.getItem(legacyLeadFormDraftStorageKey);
 
   if (!rawDraft) {
     return emptyValues;

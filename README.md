@@ -19,7 +19,7 @@ bun run test:watch
 bun run test:e2e
 ```
 
-`bun run test` runs Jest with React Testing Library for component and application behavior. `bun run test:ci` runs the usual non-E2E verification path: Jest, lint, and build. `bun run test:e2e` is intentionally separate; it starts a local Next.js dev server when needed and runs the Bruno HTTP E2E collection in `tests/e2e/bruno`.
+`bun run test` runs Jest with React Testing Library for component and application behavior. `bun run test:ci` runs the usual non-E2E verification path: Jest, lint, and build. `bun run test:e2e` is intentionally separate; it starts a local Next.js dev server when needed and runs the Bruno HTTP smoke collection in `tests/e2e/bruno`. The current Bruno collection checks the deployment-facing homepage response.
 
 Use `bun run test`, not `bun test`, for this project. `bun test` invokes Bun's built-in test runner directly and bypasses the Jest `jsdom` environment that component tests need for `window` and `document`.
 

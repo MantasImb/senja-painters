@@ -10,6 +10,8 @@ export const leadStatuses = [
   "spam",
 ] as const;
 
+export const leadStatusSchema = z.enum(leadStatuses);
+
 export type LeadStatus = (typeof leadStatuses)[number];
 
 export type LeadSubmissionRecord = {

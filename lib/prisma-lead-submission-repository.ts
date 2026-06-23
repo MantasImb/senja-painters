@@ -69,7 +69,7 @@ export function createPrismaLeadSubmissionRepository(
     },
 
     async incrementBlockedSubmission({ hashedIp, now }) {
-      await upsertRateLimitEntry(db, {
+      await createRateLimitEntry(db, {
         blockedSubmissionCount: 1,
         hashedIp,
         now,
@@ -78,7 +78,7 @@ export function createPrismaLeadSubmissionRepository(
     },
 
     async incrementSuccessfulSubmission({ hashedIp, now }) {
-      await upsertRateLimitEntry(db, {
+      await createRateLimitEntry(db, {
         blockedSubmissionCount: 0,
         hashedIp,
         now,
@@ -103,7 +103,7 @@ function mapHoneypotSubmission(submission: HoneypotSubmissionRecord) {
   };
 }
 
-async function upsertRateLimitEntry(
+async function createRateLimitEntry(
   db: PrismaClient,
   {
     blockedSubmissionCount,
@@ -117,34 +117,12 @@ async function upsertRateLimitEntry(
     successfulSubmissionCount: number;
   },
 ) {
-  const windowStart = getRateLimitWindowStart(now);
-
-  await db.rateLimitEntry.upsert({
-    create: {
+  await db.rateLimitEntry.create({
+    data: {
       blockedSubmissionCount,
       hashedIp,
       successfulSubmissionCount,
-      windowStart,
-    },
-    update: {
-      blockedSubmissionCount: {
-        increment: blockedSubmissionCount,
-      },
-      successfulSubmissionCount: {
-        increment: successfulSubmissionCount,
-      },
-    },
-    where: {
-      hashedIp_windowStart: {
-        hashedIp,
-        windowStart,
-      },
+      windowStart: now,
     },
   });
-}
-
-function getRateLimitWindowStart(now: Date) {
-  const windowStart = new Date(now);
-  windowStart.setUTCMinutes(0, 0, 0);
-  return windowStart;
 }
