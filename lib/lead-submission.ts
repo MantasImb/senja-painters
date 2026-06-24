@@ -56,23 +56,24 @@ export type AnalyticsEventRecord = {
 };
 
 export type LeadSubmissionRepository = {
-  countSuccessfulSubmissions(input: {
-    hashedIp: string;
-    since: Date;
-  }): Promise<number>;
   createHoneypotSubmission(
     submission: HoneypotSubmissionRecord,
   ): Promise<void>;
-  createLead(lead: LeadSubmissionRecord): Promise<string>;
-  incrementBlockedSubmission(input: {
+  createLeadWithinRateLimit(input: {
+    analyticsEvent: AnalyticsEventRecord;
     hashedIp: string;
+    lead: LeadSubmissionRecord;
     now: Date;
-  }): Promise<void>;
-  incrementSuccessfulSubmission(input: {
-    hashedIp: string;
-    now: Date;
-  }): Promise<void>;
-  recordAnalyticsEvent(event: AnalyticsEventRecord): Promise<void>;
+    since: Date;
+  }): Promise<
+    | {
+        status: "blocked";
+      }
+    | {
+        status: "created";
+        leadId: string;
+      }
+  >;
 };
 
 const submissionSchema = z.object({
@@ -125,6 +126,21 @@ export async function createLeadSubmission(
   },
 ): Promise<LeadFormState> {
   const rawValues = formDataToObject(formData);
+  const filledHoneypot = rawValues.companyWebsite?.trim();
+
+  if (filledHoneypot) {
+    await repository.createHoneypotSubmission({
+      submittedFields: rawValues,
+      sourcePage: rawValues.sourcePage?.trim() || "/no",
+      filledHoneypot,
+      userAgent,
+      hashedIp,
+      createdAt: now,
+    });
+
+    return successState(rawValues);
+  }
+
   const parsed = submissionSchema.safeParse(rawValues);
 
   if (!parsed.success) {
@@ -138,39 +154,8 @@ export async function createLeadSubmission(
 
   const submission = parsed.data;
 
-  if (submission.companyWebsite) {
-    await repository.createHoneypotSubmission({
-      submittedFields: rawValues,
-      sourcePage: submission.sourcePage,
-      filledHoneypot: submission.companyWebsite,
-      userAgent,
-      hashedIp,
-      createdAt: now,
-    });
-
-    return successState(rawValues);
-  }
-
   const since = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-  const successfulSubmissionCount =
-    await repository.countSuccessfulSubmissions({
-      hashedIp,
-      since,
-    });
-
-  if (successfulSubmissionCount >= 3) {
-    await repository.incrementBlockedSubmission({ hashedIp, now });
-
-    return {
-      ok: false,
-      message: genericFailureMessage,
-      fieldErrors: {},
-      values: rawValues,
-    };
-  }
-
-  await repository.incrementSuccessfulSubmission({ hashedIp, now });
-  const leadId = await repository.createLead({
+  const lead = {
     name: submission.name,
     phone: submission.phone,
     email: optionalString(submission.email),
@@ -179,24 +164,22 @@ export async function createLeadSubmission(
     propertyType: optionalString(submission.propertyType),
     desiredTimeframe: optionalString(submission.desiredTimeframe),
     projectDescription: submission.projectDescription,
-    consentGiven: true,
+    consentGiven: true as const,
     sourcePage: submission.sourcePage,
     visitorId: optionalString(submission.visitorId),
     sessionId: optionalString(submission.sessionId),
     landingPage: optionalString(submission.landingPage),
     pagesSeen: submission.pagesSeen ?? null,
-    status: "new",
+    status: "new" as const,
     hashedIp,
     userAgent,
     createdAt: now,
-  });
-
-  await repository.recordAnalyticsEvent({
-    name: "lead_submitted",
+  };
+  const analyticsEvent = {
+    name: "lead_submitted" as const,
     page: submission.sourcePage,
     metadata: {
       landingPage: optionalString(submission.landingPage),
-      leadId,
       pagesSeen: submission.pagesSeen ?? null,
       serviceType: submission.serviceType,
       sessionId: optionalString(submission.sessionId),
@@ -207,11 +190,27 @@ export async function createLeadSubmission(
     sessionId: optionalString(submission.sessionId),
     landingPage: optionalString(submission.landingPage),
     createdAt: now,
+  };
+  const result = await repository.createLeadWithinRateLimit({
+    analyticsEvent,
+    hashedIp,
+    lead,
+    now,
+    since,
   });
+
+  if (result.status === "blocked") {
+    return {
+      ok: false,
+      message: genericFailureMessage,
+      fieldErrors: {},
+      values: rawValues,
+    };
+  }
 
   return {
     ...successState(rawValues),
-    leadId,
+    leadId: result.leadId,
   };
 }
 

@@ -41,30 +41,44 @@ function createRepository(): LeadSubmissionRepository & {
   blockedCount: number;
   successfulCount: number;
 } {
+  let pendingOperation = Promise.resolve();
+
   return {
     analytics: [],
     blockedCount: 0,
     honeypots: [],
     leads: [],
     successfulCount: 0,
-    async countSuccessfulSubmissions() {
-      return this.successfulCount;
-    },
     async createHoneypotSubmission(submission) {
       this.honeypots.push(submission);
     },
-    async createLead(lead) {
-      this.leads.push(lead);
-      return "lead_1";
-    },
-    async incrementBlockedSubmission() {
-      this.blockedCount += 1;
-    },
-    async incrementSuccessfulSubmission() {
-      this.successfulCount += 1;
-    },
-    async recordAnalyticsEvent(event) {
-      this.analytics.push(event);
+    async createLeadWithinRateLimit(input) {
+      const result = pendingOperation.then(() => {
+        if (this.successfulCount >= 3) {
+          this.blockedCount += 1;
+          return {
+            status: "blocked" as const,
+          };
+        }
+
+        this.successfulCount += 1;
+        this.leads.push(input.lead);
+        this.analytics.push({
+          ...input.analyticsEvent,
+          metadata: {
+            ...input.analyticsEvent.metadata,
+            leadId: "lead_1",
+          },
+        });
+
+        return {
+          leadId: "lead_1",
+          status: "created" as const,
+        };
+      });
+
+      pendingOperation = result.then(() => undefined);
+      return result;
     },
   };
 }
@@ -152,6 +166,32 @@ describe("createLeadSubmission", () => {
     expect(repository.honeypots[0]).not.toHaveProperty("rawIpAddress");
   });
 
+  it("records a filled honeypot before validating Painting Lead fields", async () => {
+    const repository = createRepository();
+
+    const result = await createLeadSubmission(
+      formData({
+        companyWebsite: "https://spam.example",
+        sourcePage: "/no/kontakt",
+      }),
+      {
+        hashedIp: "hash_1",
+        now: new Date("2026-06-10T12:00:00.000Z"),
+        repository,
+        userAgent: "jest",
+      },
+    );
+
+    expect(result.ok).toBe(true);
+    expect(repository.honeypots).toEqual([
+      expect.objectContaining({
+        filledHoneypot: "https://spam.example",
+        sourcePage: "/no/kontakt",
+      }),
+    ]);
+    expect(repository.leads).toEqual([]);
+  });
+
   it("blocks the fourth successful submission for the same hashed identity", async () => {
     const repository = createRepository();
     repository.successfulCount = 3;
@@ -167,5 +207,30 @@ describe("createLeadSubmission", () => {
     expect(result.message).toMatch(/kunne ikke sende/i);
     expect(repository.blockedCount).toBe(1);
     expect(repository.leads).toEqual([]);
+  });
+
+  it("allows only one concurrent submission when one rate-limit slot remains", async () => {
+    const repository = createRepository();
+    repository.successfulCount = 2;
+
+    const results = await Promise.all([
+      createLeadSubmission(validSubmission({ phone: "900 00 001" }), {
+        hashedIp: "hash_1",
+        now: new Date("2026-06-10T12:00:00.000Z"),
+        repository,
+        userAgent: "jest",
+      }),
+      createLeadSubmission(validSubmission({ phone: "900 00 002" }), {
+        hashedIp: "hash_1",
+        now: new Date("2026-06-10T12:00:00.001Z"),
+        repository,
+        userAgent: "jest",
+      }),
+    ]);
+
+    expect(results.filter((result) => result.ok)).toHaveLength(1);
+    expect(results.filter((result) => !result.ok)).toHaveLength(1);
+    expect(repository.leads).toHaveLength(1);
+    expect(repository.blockedCount).toBe(1);
   });
 });

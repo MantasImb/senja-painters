@@ -17,7 +17,10 @@ Manual inspection path for the current public, Painting Lead, admin, spam-contro
 - Submit with the hidden honeypot field filled and confirm the user-facing response still looks successful.
 - Confirm honeypot submissions do not create Painting Leads.
 - Submit repeatedly from the same hashed identity and confirm rate limiting returns the generic failure message after the configured threshold.
+- With one successful-submission slot remaining, submit two requests concurrently from the same hashed identity and confirm exactly one creates a Painting Lead.
+- Confirm a failed Painting Lead transaction does not leave a successful-attempt rate-limit record.
 - Confirm raw IP addresses are not stored in lead, analytics, honeypot, or rate-limit records.
+- Confirm `bunx prisma migrate status` reports that all committed migrations are applied in the target environment before release.
 
 ## Admin Flow
 
