@@ -1,5 +1,5 @@
+import Image from "next/image";
 import Link from "next/link";
-import { ArmchairIcon, HouseIcon, PaintbrushIcon } from "lucide-react";
 
 import { LeadForm, type LeadFormAction } from "@/components/forms/LeadForm";
 import { PageViewBeacon } from "@/components/site/PageViewBeacon";
@@ -39,12 +39,17 @@ function Hero() {
   const { hero } = publicHomePage;
 
   return (
-    <section className="relative flex min-h-[78vh] items-end overflow-hidden bg-neutral-950">
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 bg-[radial-gradient(circle_at_75%_20%,rgba(255,255,255,0.14),transparent_28%),linear-gradient(135deg,transparent_0_48%,rgba(255,255,255,0.06)_48%_50%,transparent_50%_100%)]"
+    <section className="relative flex min-h-[88vh] items-end overflow-hidden bg-neutral-950">
+      <Image
+        alt={hero.imageAlt}
+        className="object-cover"
+        fill
+        priority
+        sizes="100vw"
+        src={hero.image}
       />
-      <div className="relative mx-auto w-full max-w-7xl px-5 pb-14 pt-32 sm:px-8 lg:pb-20">
+      <div className="absolute inset-0 bg-gradient-to-r from-black/88 via-black/52 to-black/12" />
+      <div className="relative mx-auto w-full max-w-7xl px-5 pb-14 pt-24 sm:px-8 lg:pb-20">
         <div className="max-w-3xl text-white">
           <div className="mb-8 flex flex-wrap items-center gap-3">
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-white/75">
@@ -234,20 +239,19 @@ function ServiceCard({
 }: {
   service: PublicHomePageContent["services"][number];
 }) {
-  const Icon =
-    service.icon === "interior"
-      ? PaintbrushIcon
-      : service.icon === "exterior"
-        ? HouseIcon
-        : ArmchairIcon;
-
   return (
-    <Card className="rounded-[8px] border-neutral-300 bg-white shadow-sm shadow-black/5">
+    <Card className="overflow-hidden rounded-[8px] border-neutral-300 bg-white py-0 shadow-sm shadow-black/5">
+      <div className="relative aspect-[5/4] bg-neutral-200">
+        <Image
+          alt={service.imageAlt}
+          className="object-cover"
+          fill
+          sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+          src={service.image}
+        />
+      </div>
       <CardContent className="p-6">
-        <div className="flex size-12 items-center justify-center rounded-[6px] bg-neutral-950 text-white">
-          <Icon aria-hidden="true" className="size-6" />
-        </div>
-        <h3 className="mt-5 text-xl font-semibold">{service.title}</h3>
+        <h3 className="text-xl font-semibold">{service.title}</h3>
         <p className="mt-4 leading-7 text-neutral-600">{service.text}</p>
         <Button asChild className="mt-6 px-0" variant="link">
           <Link href={service.pathname}>Les om {service.title.toLowerCase()}</Link>

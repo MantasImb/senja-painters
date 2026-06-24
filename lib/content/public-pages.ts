@@ -15,12 +15,15 @@ export type PublicHomePageContent = PublicRouteSeo & {
   footerText: string;
   hero: {
     eyebrow: string;
+    image: string;
+    imageAlt: string;
     kicker: string;
     text: string;
     title: string;
   };
   services: {
-    icon: "interior" | "exterior" | "furniture";
+    image: string;
+    imageAlt: string;
     pathname: string;
     text: string;
     title: string;
@@ -57,6 +60,8 @@ export const publicHomePage = {
     "Norsk først, lokalt rettet og bygget rundt forespørsler fra boligeiere på Senja og i Finnsnes.",
   hero: {
     eyebrow: "Senja Malere",
+    image: "/hero.jpg",
+    imageAlt: "Moderne enebolig med lys fasade i skumringen",
     kicker: "Senja og Finnsnes",
     text: "Lokalt malerarbeid starter best med en enkel avklaring. Fortell oss kort om prosjektet, så tar Senja Malere kontakt om omfang, tidspunkt og neste steg.",
     title: "Malerhjelp for hjem på Senja og i Finnsnes.",
@@ -71,19 +76,22 @@ export const publicHomePage = {
   },
   services: [
     {
-      icon: "interior",
+      image: "/interior.jpg",
+      imageAlt: "Lys entré og trapp med malte hvite vegger",
       pathname: "/no/innvendig-maling",
       text: "Vegger, tak, listverk og rom som trenger en ryddig overflate og et pent sluttresultat.",
       title: "Innvendig maling",
     },
     {
-      icon: "exterior",
+      image: "/exterior.jpg",
+      imageAlt: "Moderne enebolig med lys malt fasade",
       pathname: "/no/utvendig-maling",
       text: "Fasader, kledning og detaljer der underlag, vær og forarbeid må vurderes før jobben planlegges.",
       title: "Utvendig maling",
     },
     {
-      icon: "furniture",
+      image: "/furniture.jpg",
+      imageAlt: "Hvitmalt innebygd reol og skapinnredning",
       pathname: "/no/mobelmaling",
       text: "Maling av møbler, skap, dører og detaljer som trenger nytt uttrykk eller bedre finish.",
       title: "Møbler og detaljer",

@@ -148,9 +148,9 @@ V1 will keep content static in code, use conservative SEO metadata, track analyt
   - no heavy gallery in V1
   - no fake before/after claims unless the photos truly support them
 
-- No real project photos are available yet. V1 should be designed so real photos can be added later without changing the content model or layout strategy, and it should avoid fake, stock, or unsupported project imagery.
+- No real Senja Malere project photos are available yet. V1 may use the approved decorative home, interior, exterior, and cabinetry photos already committed under `public/` to establish visual context. The site must not describe or imply that these decorative photos show Senja Malere projects, completed work, local properties, or before/after evidence.
 
-- V1 stores real project photos as static assets under `public/` and renders them with `next/image`. No external media bucket, CMS media library, or upload flow is included in V1.
+- V1 stores approved decorative imagery and future verified project photos as static assets under `public/` and renders them with `next/image`. No external media bucket, CMS media library, or upload flow is included in V1.
 
 - Visual direction is friendly/local with professional polish.
 

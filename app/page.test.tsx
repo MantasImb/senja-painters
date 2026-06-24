@@ -28,7 +28,16 @@ describe("Home", () => {
     expect(screen.getByText("Finnsnes")).toBeInTheDocument();
     expect(screen.queryByText("Silsand")).not.toBeInTheDocument();
     expect(screen.queryByText("Gibostad")).not.toBeInTheDocument();
-    expect(screen.queryByRole("img")).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("img", {
+        name: /moderne enebolig med lys fasade i skumringen/i,
+      }),
+    ).toHaveAttribute("src", expect.stringContaining("hero.jpg"));
+    expect(
+      screen.getByRole("img", {
+        name: /lys entré og trapp med malte hvite vegger/i,
+      }),
+    ).toHaveAttribute("src", expect.stringContaining("interior.jpg"));
   });
 
   it("uses a dedicated hero outline variant for the secondary CTA", () => {
