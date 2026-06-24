@@ -64,7 +64,7 @@ export function createPrismaLeadSubmissionRepository(
                 createdAt: input.lead.createdAt,
                 desiredTimeframe: input.lead.desiredTimeframe,
                 email: input.lead.email,
-                hashedIp: input.lead.hashedIp,
+                hashedIp: input.hashedIp,
                 landingPage: input.lead.landingPage,
                 name: input.lead.name,
                 pagesSeen: input.lead.pagesSeen,
@@ -97,6 +97,7 @@ export function createPrismaLeadSubmissionRepository(
             });
             await createAnalyticsEvent(transaction, {
               ...input.analyticsEvent,
+              hashedIp: input.hashedIp,
               metadata: {
                 ...input.analyticsEvent.metadata,
                 leadId: createdLead.id,

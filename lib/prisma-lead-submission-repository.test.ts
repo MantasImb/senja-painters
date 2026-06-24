@@ -76,8 +76,12 @@ describe("Prisma lead submission repository", () => {
       $transaction: transaction,
     } as unknown as PrismaClient);
 
+    const submission = validAtomicSubmission();
+    submission.lead.hashedIp = "divergent_lead_hash";
+    submission.analyticsEvent.hashedIp = "divergent_analytics_hash";
+
     await expect(
-      repository.createLeadWithinRateLimit(validAtomicSubmission()),
+      repository.createLeadWithinRateLimit(submission),
     ).resolves.toEqual({
       leadId: "lead_1",
       status: "created",
@@ -103,8 +107,17 @@ describe("Prisma lead submission repository", () => {
         windowStart: now,
       },
     });
+    expect(leadCreate).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        hashedIp: "hash_1",
+      }),
+      select: {
+        id: true,
+      },
+    });
     expect(analyticsCreate).toHaveBeenCalledWith({
       data: expect.objectContaining({
+        hashedIp: "hash_1",
         metadata: expect.objectContaining({
           leadId: "lead_1",
         }),
