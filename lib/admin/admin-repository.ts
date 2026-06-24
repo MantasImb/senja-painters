@@ -143,7 +143,7 @@ export async function getAdminAnalyticsSummary(timeframe: AnalyticsTimeframe) {
   });
 }
 
-function createPrismaAdminAnalyticsRepository(
+export function createPrismaAdminAnalyticsRepository(
   db: PrismaClient = getDb(),
 ): AdminAnalyticsRepository {
   return {

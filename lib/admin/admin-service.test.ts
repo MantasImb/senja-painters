@@ -213,4 +213,52 @@ describe("buildAnalyticsSummary", () => {
     expect(summary.rateLimitedSubmissionCount).toBe(2);
     expect(summary.recentEvents).toHaveLength(4);
   });
+
+  it.each([
+    ["7d", new Date("2026-06-17T12:00:00.000Z")],
+    ["30d", new Date("2026-05-25T12:00:00.000Z")],
+    ["all", undefined],
+  ] as const)(
+    "applies the %s boundary to every analytics aggregate",
+    async (timeframe, since) => {
+      const repository = createEmptyAnalyticsRepository();
+
+      await buildAnalyticsSummary({
+        now: new Date("2026-06-24T12:00:00.000Z"),
+        repository,
+        timeframe,
+      });
+
+      expect(repository.countPageViews).toHaveBeenCalledWith({ since });
+      expect(repository.countSessions).toHaveBeenCalledWith({ since });
+      expect(repository.countUniqueVisitors).toHaveBeenCalledWith({ since });
+      expect(repository.listViewsByPage).toHaveBeenCalledWith({ since });
+      expect(repository.listSessionsByLandingPage).toHaveBeenCalledWith({ since });
+      expect(repository.listRecentAnalyticsEvents).toHaveBeenCalledWith({
+        limit: 10,
+        since,
+      });
+      expect(repository.countLeads).toHaveBeenCalledWith({ since });
+      expect(repository.listLeadsBySourcePage).toHaveBeenCalledWith({ since });
+      expect(repository.listLeadsByLandingPage).toHaveBeenCalledWith({ since });
+      expect(repository.countHoneypotSubmissions).toHaveBeenCalledWith({ since });
+      expect(repository.countBlockedSubmissions).toHaveBeenCalledWith({ since });
+    },
+  );
 });
+
+function createEmptyAnalyticsRepository() {
+  return {
+    countBlockedSubmissions: jest.fn(async () => 0),
+    countHoneypotSubmissions: jest.fn(async () => 0),
+    countLeads: jest.fn(async () => 0),
+    countPageViews: jest.fn(async () => 0),
+    countSessions: jest.fn(async () => 0),
+    countUniqueVisitors: jest.fn(async () => 0),
+    listRecentAnalyticsEvents: jest.fn(async () => []),
+    listSessionsByLandingPage: jest.fn(async () => []),
+    listViewsByPage: jest.fn(async () => []),
+    listLeadsBySourcePage: jest.fn(async () => []),
+    listLeadsByLandingPage: jest.fn(async () => []),
+  } satisfies AdminAnalyticsRepository;
+}

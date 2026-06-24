@@ -86,17 +86,26 @@ export default async function AdminDashboardPage({
           </span>
           <FilterLink
             active={timeframe === "7d"}
-            href="/admin?timeframe=7d"
+            href={adminDashboardHref({
+              status: selectedStatus,
+              timeframe: "7d",
+            })}
             label="7 dager"
           />
           <FilterLink
             active={timeframe === "30d"}
-            href="/admin?timeframe=30d"
+            href={adminDashboardHref({
+              status: selectedStatus,
+              timeframe: "30d",
+            })}
             label="30 dager"
           />
           <FilterLink
             active={timeframe === "all"}
-            href="/admin?timeframe=all"
+            href={adminDashboardHref({
+              status: selectedStatus,
+              timeframe: "all",
+            })}
             label="Alle"
           />
         </div>
@@ -145,11 +154,15 @@ export default async function AdminDashboardPage({
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <FilterLink active={!selectedStatus} href="/admin" label="Alle" />
+              <FilterLink
+                active={!selectedStatus}
+                href={adminDashboardHref({ timeframe })}
+                label="Alle"
+              />
               {leadStatuses.map((status) => (
                 <FilterLink
                   active={selectedStatus === status}
-                  href={`/admin?status=${status}`}
+                  href={adminDashboardHref({ status, timeframe })}
                   key={status}
                   label={status}
                 />
@@ -307,6 +320,27 @@ function parseStatus(status: string | undefined) {
   return leadStatuses.includes(status as LeadStatus)
     ? (status as LeadStatus)
     : undefined;
+}
+
+function adminDashboardHref({
+  status,
+  timeframe,
+}: {
+  status?: LeadStatus;
+  timeframe?: "7d" | "30d" | "all";
+}) {
+  const query = new URLSearchParams();
+
+  if (status) {
+    query.set("status", status);
+  }
+
+  if (timeframe) {
+    query.set("timeframe", timeframe);
+  }
+
+  const queryString = query.toString();
+  return queryString ? `/admin?${queryString}` : "/admin";
 }
 
 function formatDate(date: Date) {
