@@ -191,6 +191,82 @@ describe("admin pages", () => {
     );
   });
 
+  it("keeps the selected Painting Lead status when changing analytics timeframe", async () => {
+    mockAdminCookieValue = createAdminSessionCookieValue({
+      now: new Date(),
+      secret: "s".repeat(32),
+    });
+    getAdminLeadsMock.mockResolvedValue([]);
+    getAdminAnalyticsSummaryMock.mockResolvedValue(analyticsSummary);
+
+    render(
+      await AdminDashboardPage({
+        searchParams: Promise.resolve({
+          status: "contacted",
+          timeframe: "30d",
+        }),
+      }),
+    );
+
+    expect(screen.getByRole("link", { name: "7 dager" })).toHaveAttribute(
+      "href",
+      "/admin?status=contacted&timeframe=7d",
+    );
+    expect(screen.getAllByRole("link", { name: "Alle" })[0]).toHaveAttribute(
+      "href",
+      "/admin?status=contacted&timeframe=all",
+    );
+  });
+
+  it("keeps the selected analytics timeframe when changing Painting Lead status", async () => {
+    mockAdminCookieValue = createAdminSessionCookieValue({
+      now: new Date(),
+      secret: "s".repeat(32),
+    });
+    getAdminLeadsMock.mockResolvedValue([]);
+    getAdminAnalyticsSummaryMock.mockResolvedValue(analyticsSummary);
+
+    render(
+      await AdminDashboardPage({
+        searchParams: Promise.resolve({ timeframe: "30d" }),
+      }),
+    );
+
+    expect(screen.getByRole("link", { name: "contacted" })).toHaveAttribute(
+      "href",
+      "/admin?status=contacted&timeframe=30d",
+    );
+    expect(screen.getAllByRole("link", { name: "Alle" })[1]).toHaveAttribute(
+      "href",
+      "/admin?timeframe=30d",
+    );
+  });
+
+  it.each([
+    ["30d", "30 dager"],
+    ["all", "Alle"],
+  ] as const)(
+    "loads and highlights the %s analytics timeframe",
+    async (timeframe, label) => {
+      mockAdminCookieValue = createAdminSessionCookieValue({
+        now: new Date(),
+        secret: "s".repeat(32),
+      });
+      getAdminLeadsMock.mockResolvedValue([]);
+      getAdminAnalyticsSummaryMock.mockResolvedValue(analyticsSummary);
+
+      render(
+        await AdminDashboardPage({
+          searchParams: Promise.resolve({ timeframe }),
+        }),
+      );
+
+      expect(getAdminAnalyticsSummaryMock).toHaveBeenCalledWith(timeframe);
+      const matchingLinks = screen.getAllByRole("link", { name: label });
+      expect(matchingLinks[0]).toHaveClass("bg-neutral-950", "text-white");
+    },
+  );
+
   it("shows submitted contact and project information on the lead detail page", async () => {
     mockAdminCookieValue = createAdminSessionCookieValue({
       now: new Date(),
