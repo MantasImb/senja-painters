@@ -230,6 +230,8 @@ Add basic V1 spam protection to the public submission path while keeping data co
 
 This phase should protect the lead database without introducing reCAPTCHA, Cloudflare Turnstile, or any third-party anti-spam widget.
 
+Implementation note: Phase 6 is implemented. Rate-limit decisions are serialized per hashed identity and committed atomically with Painting Lead creation. The concurrency failure mode and resolution are documented in [Phase 6: Atomic Rate Limiting](../docs/phase-6-atomic-rate-limiting.md).
+
 ### Acceptance criteria
 
 - [x] Public forms include a honeypot field that normal visitors do not interact with.
