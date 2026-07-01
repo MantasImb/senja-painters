@@ -171,7 +171,8 @@ describe("admin pages", () => {
     );
 
     expect(getAdminLeadsMock).toHaveBeenCalledWith("contacted");
-    const rows = screen.getAllByRole("row");
+    const rows = within(screen.getByRole("table", { name: "Leads" }))
+      .getAllByRole("row");
     expect(within(rows[1]).getByText("Nyere Lead")).toBeInTheDocument();
     expect(within(rows[2]).getByText("Eldre Lead")).toBeInTheDocument();
     expect(
@@ -216,6 +217,29 @@ describe("admin pages", () => {
       "href",
       "/admin?status=contacted&timeframe=all",
     );
+  });
+
+  it("places the analytics period control before the top statistics", async () => {
+    mockAdminCookieValue = createAdminSessionCookieValue({
+      now: new Date(),
+      secret: "s".repeat(32),
+    });
+    getAdminLeadsMock.mockResolvedValue([]);
+    getAdminAnalyticsSummaryMock.mockResolvedValue(analyticsSummary);
+
+    render(
+      await AdminDashboardPage({
+        searchParams: Promise.resolve({}),
+      }),
+    );
+
+    const periodLabel = screen.getByText("Periode");
+    const firstTopStatistic = screen.getByText("Besøkende");
+
+    expect(
+      periodLabel.compareDocumentPosition(firstTopStatistic) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
   });
 
   it("keeps the selected analytics timeframe when changing Painting Lead status", async () => {

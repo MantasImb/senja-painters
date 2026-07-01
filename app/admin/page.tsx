@@ -60,27 +60,7 @@ export default async function AdminDashboardPage({
           </Button>
         </header>
 
-        <section className="grid gap-4 py-8 md:grid-cols-3 xl:grid-cols-6">
-          <Metric label="Besøkende" value={analytics.totalUniqueVisitors} />
-          <Metric label="Besøk" value={analytics.totalSessions} />
-          <Metric label="Sidevisninger" value={analytics.totalPageViews} />
-          <Metric label="Leads" value={analytics.totalLeads} />
-          <Metric
-            label="Konvertering per besøk"
-            value={`${analytics.conversionRate.toFixed(2)}%`}
-          />
-          <Metric
-            label="Spam / blokkert"
-            value={`${analytics.honeypotSubmissionCount} / ${analytics.rateLimitedSubmissionCount}`}
-          />
-        </section>
-        <p className="-mt-4 mb-6 max-w-3xl text-sm leading-6 text-neutral-600">
-          Analytics er beste estimat fra klientstyrte hendelser. Tall for
-          besøkende og besøk kan påvirkes av nettleserlagring, blokkeringer og
-          manuelt konstruerte forespørsler.
-        </p>
-
-        <div className="mb-6 flex flex-wrap items-center gap-2">
+        <div className="mt-8 flex flex-wrap items-center gap-2">
           <span className="mr-2 text-sm font-semibold text-neutral-600">
             Periode
           </span>
@@ -109,6 +89,26 @@ export default async function AdminDashboardPage({
             label="Alle"
           />
         </div>
+
+        <section className="grid gap-4 py-6 md:grid-cols-3 xl:grid-cols-6">
+          <Metric label="Besøkende" value={analytics.totalUniqueVisitors} />
+          <Metric label="Besøk" value={analytics.totalSessions} />
+          <Metric label="Sidevisninger" value={analytics.totalPageViews} />
+          <Metric label="Leads" value={analytics.totalLeads} />
+          <Metric
+            label="Konvertering per besøk"
+            value={`${analytics.conversionRate.toFixed(2)}%`}
+          />
+          <Metric
+            label="Spam / blokkert"
+            value={`${analytics.honeypotSubmissionCount} / ${analytics.rateLimitedSubmissionCount}`}
+          />
+        </section>
+        <p className="-mt-2 mb-6 max-w-3xl text-sm leading-6 text-neutral-600">
+          Analytics er beste estimat fra klientstyrte hendelser. Tall for
+          besøkende og besøk kan påvirkes av nettleserlagring, blokkeringer og
+          manuelt konstruerte forespørsler.
+        </p>
 
         <section className="grid gap-6 lg:grid-cols-2">
           <AnalyticsList
@@ -171,7 +171,7 @@ export default async function AdminDashboardPage({
           </CardHeader>
 
           <CardContent className="px-0 pt-5">
-            <Table className="min-w-[760px]">
+            <Table aria-label="Leads" className="min-w-[760px]">
               <TableHeader>
                 <TableRow>
                   <TableHead className="text-neutral-700">Dato</TableHead>
@@ -227,24 +227,58 @@ export default async function AdminDashboardPage({
               Siste hendelser
             </CardTitle>
           </CardHeader>
-          <CardContent className="grid gap-3">
-            {analytics.recentEvents.map((event) => (
-              <div
-                className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200 pb-3 text-sm"
-                key={event.id}
-              >
-                <Badge
-                  className="rounded-[6px] border-neutral-300 text-neutral-950"
-                  variant="outline"
-                >
-                  {event.name}
-                </Badge>
-                <span className="text-neutral-600">{event.page ?? "intern"}</span>
-                <span className="text-neutral-500">
-                  {formatDate(event.createdAt)}
-                </span>
-              </div>
-            ))}
+          <CardContent className="px-0 pt-5">
+            <Table
+              aria-label="Siste hendelser"
+              className="min-w-[560px] table-fixed"
+            >
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[34%] text-neutral-700">
+                    Hendelse
+                  </TableHead>
+                  <TableHead className="w-[38%] text-neutral-700">
+                    Rute
+                  </TableHead>
+                  <TableHead className="w-[28%] text-neutral-700">
+                    Tidspunkt
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {analytics.recentEvents.length > 0 ? (
+                  analytics.recentEvents.map((event) => (
+                    <TableRow key={event.id}>
+                      <TableCell>
+                        <Badge
+                          className="rounded-[6px] border-neutral-300 text-neutral-950"
+                          variant="outline"
+                        >
+                          {event.name}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-neutral-600">
+                        <span className="block max-w-full truncate">
+                          {event.page ?? "intern"}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-neutral-500">
+                        {formatDate(event.createdAt)}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell
+                      className="h-20 text-center text-neutral-600"
+                      colSpan={3}
+                    >
+                      Ingen hendelser ennå.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
       </div>
@@ -277,16 +311,42 @@ function AnalyticsList({
       <CardHeader>
         <CardTitle className="text-xl font-semibold">{title}</CardTitle>
       </CardHeader>
-      <CardContent className="grid gap-3">
-        {items.map((item) => (
-          <div className="flex justify-between gap-4 text-sm" key={item.label}>
-            <span>{item.label}</span>
-            <span className="font-semibold">{item.value}</span>
-          </div>
-        ))}
-        {items.length === 0 ? (
-          <p className="text-sm text-neutral-600">{emptyLabel}</p>
-        ) : null}
+      <CardContent className="px-0 pt-5">
+        <Table aria-label={title} className="min-w-[360px] table-fixed">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-neutral-700">Side</TableHead>
+              <TableHead className="w-24 text-right text-neutral-700">
+                Antall
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {items.length > 0 ? (
+              items.map((item) => (
+                <TableRow key={item.label}>
+                  <TableCell>
+                    <span className="block max-w-full truncate">
+                      {item.label}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-right font-semibold">
+                    {item.value}
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  className="h-20 text-center text-neutral-600"
+                  colSpan={2}
+                >
+                  {emptyLabel}
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </CardContent>
     </Card>
   );
