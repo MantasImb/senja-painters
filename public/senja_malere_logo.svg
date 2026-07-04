@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+  <title id="title">Senja Malere logo</title>
+  <desc id="desc">Vector recreation of the Senja Malere logo extracted from the supplied storefront image.</desc>
+  <defs>
+    <style>
+      .navy { fill: #062f5f; }
+      .yellow { fill: #f7bd17; }
+      .stroke-white { stroke: #ffffff; stroke-width: 22; stroke-linejoin: round; stroke-linecap: round; }
+      .stroke-navy { stroke: #062f5f; stroke-width: 26; stroke-linejoin: round; stroke-linecap: round; }
+      .wordmark { font-family: Arial, Helvetica, sans-serif; font-weight: 900; letter-spacing: 18px; fill: #062f5f; }
+    </style>
+  </defs>
+
+  <!-- Icon -->
+  <g transform="translate(250 215)">
+    <!-- Yellow sun / paint splash behind the house -->
+    <circle cx="0" cy="0" r="155" class="yellow"/>
+
+    <!-- House silhouette with white trim -->
+    <g class="stroke-white">
+      <path class="navy" d="M-142 19 L0 -116 L136 19 L101 19 L101 127 L-104 127 L-104 19 Z"/>
+      <path class="navy" d="M61 -89 L97 -89 L97 -34 L61 -68 Z"/>
+    </g>
+
+    <!-- Small window cut-outs -->
+    <g fill="#ffffff">
+      <rect x="-37" y="11" width="27" height="27" rx="2"/>
+      <rect x="1" y="11" width="27" height="27" rx="2"/>
+      <rect x="-37" y="49" width="27" height="27" rx="2"/>
+      <rect x="1" y="49" width="27" height="27" rx="2"/>
+    </g>
+
+    <!-- Paint brush handle and ferrule -->
+    <g transform="translate(126 27) rotate(-42)">
+      <path d="M0 0 L58 0 L58 104 L0 104 Z" fill="#ffffff"/>
+      <path d="M13 10 L45 10 L45 94 L13 94 Z" class="navy"/>
+      <path d="M58 -5 C94 -7 121 10 126 42 L126 125 C126 159 99 184 66 184 L58 184 Z" class="navy" stroke="#ffffff" stroke-width="20" stroke-linejoin="round"/>
+      <circle cx="91" cy="153" r="12" fill="#ffffff"/>
+    </g>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="60" y="565" class="wordmark" font-size="145">SENJA</text>
+  <text x="60" y="735" class="wordmark" font-size="145">MALERE</text>
+</svg>
