@@ -1,6 +1,6 @@
 # SEO Photo Brief
 
-This brief defines the photos Senja Malere should collect before finalizing website imagery or adding project examples. Publish photos as Senja Malere work only when they are verified, truthful, and safe to show publicly. After the photo-finalization stage, images kept on the website are treated as verified publishable assets, not placeholders.
+This brief defines the photos Senja Malere should collect before finalizing website imagery or adding project examples. Publish photos only when they are verified, truthful, and safe to show publicly. Service-page imagery belongs to the same verified-photo set; there is no separate category for generic publishable service illustrations. After the photo-finalization stage, images kept on the website are treated as verified publishable assets, not placeholders.
 
 ## Highest Priority
 
@@ -32,7 +32,7 @@ This brief defines the photos Senja Malere should collect before finalizing webs
 - Use high-resolution originals where possible.
 - Prefer natural light and realistic color.
 - Avoid heavy filters, text overlays, watermarks, and screenshots from social media.
-- Keep source notes for each photo: what it shows, where it was taken if relevant, whether it is Senja Malere work, and whether permission to publish is clear.
+- Keep source notes for each photo: what it shows, where it was taken if relevant, what kind of work, process, tool, material, or surface it documents, and whether permission to publish is clear.
 
 ## Launch Decision
 

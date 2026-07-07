@@ -6,6 +6,11 @@ export type PublicRouteSeo = {
 };
 
 export type PublicHomePageContent = PublicRouteSeo & {
+  about: {
+    eyebrow: string;
+    text: string;
+    title: string;
+  };
   areas: string[];
   contact: {
     eyebrow: string;
@@ -35,9 +40,29 @@ export type PublicHomePageContent = PublicRouteSeo & {
   };
 };
 
+export type PublicContactInfo = {
+  hours: string;
+  phoneDisplay: string;
+  phoneHref: string;
+};
+
+export type RequestProcessStep = {
+  text: string;
+  title: string;
+};
+
+export type LaunchFaqItem = {
+  answer: string;
+  question: string;
+};
+
 export type PublicPageContent = {
   eyebrow: string;
   formTitle?: string;
+  image?: {
+    alt: string;
+    src: string;
+  };
   intro: string;
   pathname: string;
   sections: {
@@ -49,11 +74,60 @@ export type PublicPageContent = {
   type: "location" | "service" | "contact" | "privacy";
 };
 
+export const publicContactInfo = {
+  hours: "Mandag-søndag 08:00-22:00",
+  phoneDisplay: "+47 986 41 443",
+  phoneHref: "tel:+4798641443",
+} satisfies PublicContactInfo;
+
+export const requestProcessSteps = [
+  {
+    title: "Send forespørsel",
+    text: "Fortell kort hva du ønsker hjelp med, hvor prosjektet er, og hva som skal males.",
+  },
+  {
+    title: "Avklar maleprosjektet",
+    text: "Senja Malere tar kontakt for å forstå omfang, overflater, tidspunkt og praktiske forhold.",
+  },
+  {
+    title: "Planlegg neste steg",
+    text: "Når prosjektet er avklart, avtales en ryddig vei videre uten faste løfter om pris eller svartid.",
+  },
+] satisfies RequestProcessStep[];
+
+export const launchFaq = [
+  {
+    question: "Hvilke områder dekker Senja Malere?",
+    answer:
+      "Dekningen er Senja og Finnsnes. Senja Malere tar imot forespørsler fra boligeiere i disse områdene.",
+  },
+  {
+    question: "Hvilke maleprosjekter kan jeg sende inn?",
+    answer:
+      "Du kan sende inn forespørsler om innvendig maling, utvendig maling og møbelmaling for hjem, hytter og detaljer.",
+  },
+  {
+    question: "Kan jeg spørre om mindre prosjekter?",
+    answer:
+      "Ja, mindre prosjekter som dører, skap, kjøkkenfronter, innebygde løsninger og møbler passer under møbelmaling og detaljarbeid.",
+  },
+  {
+    question: "Hva skjer etter at jeg sender forespørselen?",
+    answer:
+      "Senja Malere bruker forespørselen til å kontakte deg, avklare maleprosjektet og planlegge neste steg.",
+  },
+] satisfies LaunchFaqItem[];
+
 export const publicHomePage = {
+  about: {
+    eyebrow: "Om Senja Malere",
+    text: "Senja Malere er lokal malerhjelp for boligeiere på Senja og i Finnsnes. Forespørsler kan handle om rom, fasader, møbler og detaljer som trenger nye overflater eller en ryddig oppfrisking.",
+    title: "Lokal malerhjelp for hjem, hytter og detaljer.",
+  },
   areas: ["Senja", "Finnsnes"],
   contact: {
     eyebrow: "Be om kontakt",
-    text: "Skjemaet samler det viktigste for en god første samtale. E-post er valgfritt, og kontakt går gjennom forespørselen.",
+    text: "Skjemaet er den beste starten fordi det samler det viktigste for en god første samtale. E-post er valgfritt.",
     title: "Fortell oss kort om malejobben.",
   },
   footerText:
@@ -134,6 +208,10 @@ export const publicPages = {
   innvendigMaling: {
     eyebrow: "Tjeneste",
     formTitle: "Beskriv innvendig maling",
+    image: {
+      alt: "Lys entré og trapp med malte hvite vegger",
+      src: "/interior.jpg",
+    },
     intro:
       "Innvendig maling dekker vegger, tak og listverk i hjem som trenger nye overflater, bedre finish eller en roligere helhet.",
     pathname: "/no/innvendig-maling",
@@ -161,12 +239,12 @@ export const publicPages = {
     eyebrow: "Kontakt",
     formTitle: "Send forespørsel",
     intro:
-      "Kontakt Senja Malere via skjema som eneste offentlige kontaktvei i V1. Telefonnummer og e-post vises ikke offentlig før de er klare for bruk.",
+      "Skjemaet er hovedveien for forespørsler til Senja Malere. Telefon er et sekundært alternativ hvis du heller vil ta direkte kontakt.",
     pathname: "/no/kontakt",
     sections: [
       {
-        title: "Én tydelig kontaktvei",
-        text: "Skjemaet samler navn, telefon, område, tjeneste, prosjektbeskrivelse og samtykke slik at forespørselen kan vurderes uten at personopplysninger spres i flere kanaler.",
+        title: "Skjema først",
+        text: "Skjemaet samler navn, telefon, område, tjeneste, prosjektbeskrivelse og samtykke slik at forespørselen kan vurderes ryddig før neste steg.",
       },
       {
         title: "Hva skjer etter innsending",
@@ -186,6 +264,10 @@ export const publicPages = {
   mobelmaling: {
     eyebrow: "Tjeneste",
     formTitle: "Beskriv møbelmalingen",
+    image: {
+      alt: "Hvitmalt innebygd reol og skapinnredning",
+      src: "/furniture.jpg",
+    },
     intro:
       "Møbelmaling er for møbler, skap og detaljer som trenger ny finish, nytt uttrykk eller en mer helhetlig plass i hjemmet.",
     pathname: "/no/mobelmaling",
@@ -267,6 +349,10 @@ export const publicPages = {
   utvendigMaling: {
     eyebrow: "Tjeneste",
     formTitle: "Beskriv utvendig maling",
+    image: {
+      alt: "Moderne enebolig med lys malt fasade",
+      src: "/exterior.jpg",
+    },
     intro:
       "Utvendig maling handler om fasade, kledning og detaljer der vær og kledning må vurderes før arbeid og tidspunkt planlegges.",
     pathname: "/no/utvendig-maling",

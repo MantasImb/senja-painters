@@ -90,4 +90,72 @@ describe("Home", () => {
       within(navigation).getByRole("link", { name: /personvern/i }),
     ).toHaveAttribute("href", "/no/personvern");
   });
+
+  it("keeps the homepage form first while showing secondary phone, request process, and the shared launch FAQ", () => {
+    render(
+      <SenjaHomePage
+        leadAction={async () => ({
+          ok: false,
+          message: "",
+          fieldErrors: {},
+          values: {},
+        })}
+      />,
+    );
+
+    expect(screen.getByRole("link", { name: /be om kontakt/i })).toHaveAttribute(
+      "href",
+      "#foresporsel",
+    );
+    expect(screen.getByRole("button", { name: /send forespørsel/i })).toBeInTheDocument();
+    expect(screen.getAllByText(/du kan også ringe/i)).toHaveLength(2);
+    expect(
+      screen.getAllByRole("link", { name: /\+47 986 41 443/i })[0],
+    ).toHaveAttribute("href", "tel:+4798641443");
+
+    for (const step of [
+      /send forespørsel/i,
+      /avklar maleprosjektet/i,
+      /planlegg neste steg/i,
+    ]) {
+      expect(screen.getByRole("heading", { name: step })).toBeInTheDocument();
+    }
+
+    const faq = screen.getByRole("region", {
+      name: /ofte stilte spørsmål/i,
+    });
+    const questions = within(faq).getAllByRole("heading", { level: 3 });
+
+    expect(questions).toHaveLength(4);
+    expect(
+      within(faq).getByRole("heading", {
+        level: 3,
+        name: /hvilke områder dekker senja malere/i,
+      }),
+    ).toBeInTheDocument();
+    expect(within(faq).getByText(/senja og finnsnes/i)).toBeInTheDocument();
+    expect(
+      within(faq).getByRole("heading", {
+        level: 3,
+        name: /hvilke maleprosjekter kan jeg sende inn/i,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      within(faq).getByRole("heading", {
+        level: 3,
+        name: /kan jeg spørre om mindre prosjekter/i,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      within(faq).getByText(/dører, skap, kjøkkenfronter, innebygde løsninger og møbler/i),
+    ).toBeInTheDocument();
+    expect(
+      within(faq).getByRole("heading", {
+        level: 3,
+        name: /hva skjer etter at jeg sender forespørselen/i,
+      }),
+    ).toBeInTheDocument();
+    expect(within(faq).queryByText(/\+47 986 41 443/i)).not.toBeInTheDocument();
+    expect(within(faq).queryByText(/08:00-22:00/i)).not.toBeInTheDocument();
+  });
 });

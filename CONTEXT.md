@@ -65,7 +65,7 @@ Outdoor work such as exterior walls, facades, trim, staining, wood treatment, or
 Furniture, cabinets, kitchen fronts, doors, built-ins, and detail surfaces that need a new finish.
 
 **Public Contact Path**:
-The public ways a homeowner can contact Senja Malere, with the lead form as the preferred intake path and phone as a direct-contact alternative.
+The public ways a homeowner can contact Senja Malere, with the lead form as the primary intake path and phone as a secondary direct-contact alternative.
 _Avoid_: Hidden-only contact, unmonitored contact channel
 
 **Public Phone Number**:
@@ -73,7 +73,7 @@ A verified phone number that homeowners may use to contact Senja Malere directly
 _Avoid_: Private phone number, placeholder phone number
 
 **Public Contact Hours**:
-The hours when homeowners can reasonably expect Senja Malere to receive calls or contact requests.
+The verified Monday-Sunday 08:00-22:00 window when homeowners can reasonably expect Senja Malere to receive calls or contact requests.
 _Avoid_: Store opening hours, walk-in hours
 
 **Lead Status**:
@@ -112,16 +112,16 @@ A public example of Senja Malere work supported by verified project photos or ot
 _Avoid_: Portfolio filler, stock example, implied completed project
 
 **Launch FAQ**:
-A small set of practical public questions that help homeowners decide whether to submit a painting lead.
+A small shared set of practical public questions, shown on the homepage and contact page, that help homeowners decide whether to submit a painting lead.
 _Avoid_: Form-field explanation, generic SEO filler
 
 **Request Process**:
-The simple public explanation of what happens from submitted request to next-step planning.
+The simple public explanation shown with every public lead form, explaining what happens from submitted request to next-step planning.
 _Avoid_: Booking process, quote workflow, guaranteed response time
 
 **Launch About Section**:
-A short public explanation of who Senja Malere serves and what painting help the business offers.
-_Avoid_: Separate about page, years-in-business claim, certification claim
+A short homepage explanation of local painting help for homeowners on Senja and in Finnsnes.
+_Avoid_: Separate about page, founder biography, years-in-business claim, certification claim
 
 ## Relationships
 
@@ -136,16 +136,25 @@ _Avoid_: Separate about page, years-in-business claim, certification claim
 - Senja Malere's primary **Business Category** is painter.
 - A **Service Area** can have public location content and can produce many **Painting Leads**.
 - A **Painting Service** can have public service content and can produce many **Painting Leads**.
-- The **Public Contact Path** includes the lead form and may include a **Public Phone Number** when that number is a **Verified Business Fact**.
-- **Public Contact Hours** may be shown as Monday-Sunday 08:00-22:00 when they describe real contact availability, not a customer-visit location.
+- The **Public Contact Path** keeps the lead form as the primary customer intake path even after a **Public Phone Number** is shown.
+- The verified **Public Phone Number** may be shown in the contact section and footer as a secondary direct-contact option, not as a replacement for the lead form.
+- **Public Contact Hours** are Monday-Sunday 08:00-22:00 and describe contact availability, not a customer-visit location.
 - A **Honeypot Submission** is separate from **Painting Leads** and should not become one.
 - A **Verified Business Fact** is required before the site claims reviews, ratings, opening hours, public contact details, certifications, years in business, an organization number, a physical address, or Google Business Profile links.
 - **Verified Project Photos** are required before the site presents images as Senja Malere projects, completed work, local properties, or before-and-after evidence.
+- Each launch **Painting Service** page should use a **Verified Project Photo** when a suitable provided photo is available; there is no separate category for generic publishable service illustrations.
 - After the photo-finalization stage, images kept on the website are treated as verified publishable assets, not placeholders.
 - **Work Examples** should be added only after there are enough strong **Verified Project Photos** to avoid thin or misleading proof sections.
-- **Launch FAQ** content should stay minimal and answer real project or buying uncertainty, not obvious form mechanics.
+- **Launch FAQ** content should stay minimal, shared between the homepage and contact page, and answer real project or buying uncertainty rather than obvious form mechanics.
+- The **Launch FAQ** should describe launch coverage as Senja and Finnsnes only; deferred nearby locations should not be invited through FAQ wording until they become real **Service Areas** with distinct useful content.
+- The **Launch FAQ** may include one shared answer for smaller/detail projects such as doors, cabinets, kitchen fronts, built-ins, and furniture; this supports **Møbelmaling** without creating narrower service pages.
+- The launch version of the **Launch FAQ** should start with exactly four questions: service areas, relevant painting projects, smaller/detail projects, and what happens after a request.
+- The **Launch FAQ** should not mention photos unless a clear homeowner-facing reason appears later.
+- The **Launch FAQ** should not carry phone number or contact-hours content; those facts belong near the form and in the footer.
+- Service and location pages should not repeat the full **Launch FAQ**; they may include only page-specific clarification when it helps a **Homeowner** understand the relevant **Painting Service** or **Service Area**.
 - The **Request Process** should be described as: send request, clarify the painting project, then plan next steps.
-- The **Launch About Section** belongs on the homepage; a separate about page is deferred until there is more verified business story to tell.
+- The **Request Process** should appear with every public lead form, above the form on mobile and alongside the form on desktop where the layout allows.
+- The **Launch About Section** belongs on the homepage and should frame Senja Malere as local painting help for homeowners, not as a biography-led company story.
 - Exterior timing, weather, season, and surface condition can be mentioned briefly, but detailed planning should be handled privately with the homeowner after a request.
 - Google Business Profile and local SEO profiles should link to the Norwegian homepage, not directly to the contact page.
 - Senja Malere should not publish an organization number for launch.

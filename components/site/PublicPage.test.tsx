@@ -61,7 +61,7 @@ describe("PublicPage", () => {
       {
         page: publicPages.kontakt,
         heading: /kontakt senja malere/i,
-        text: /skjema som eneste offentlige kontaktvei/i,
+        text: /skjemaet er hovedveien/i,
         hasForm: true,
       },
       {
@@ -142,6 +142,124 @@ describe("PublicPage", () => {
 
       unmount();
       window.localStorage.clear();
+    }
+  });
+
+  it("shows the request process with every public form and keeps the shared FAQ on the contact page only", () => {
+    const pagesWithForms = [
+      publicPages.senja,
+      publicPages.finnsnes,
+      publicPages.innvendigMaling,
+      publicPages.utvendigMaling,
+      publicPages.mobelmaling,
+      publicPages.kontakt,
+    ];
+
+    for (const page of pagesWithForms) {
+      const { unmount } = render(
+        <PublicPage leadAction={leadAction} page={page} />,
+      );
+
+      expect(
+        screen.getAllByRole("heading", { name: /send forespørsel/i }).length,
+      ).toBeGreaterThan(0);
+      expect(
+        screen.getByRole("heading", { name: /avklar maleprosjektet/i }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: /planlegg neste steg/i }),
+      ).toBeInTheDocument();
+      expect(screen.getAllByText(/du kan også ringe/i).length).toBeGreaterThan(
+        0,
+      );
+
+      if (page.type === "contact") {
+        expect(
+          screen.getByRole("region", { name: /ofte stilte spørsmål/i }),
+        ).toBeInTheDocument();
+      } else {
+        expect(
+          screen.queryByRole("region", { name: /ofte stilte spørsmål/i }),
+        ).not.toBeInTheDocument();
+      }
+
+      unmount();
+    }
+  });
+
+  it("frames the contact page as form-first with phone as a secondary path", () => {
+    render(<PublicPage leadAction={leadAction} page={publicPages.kontakt} />);
+
+    expect(screen.getByText(/skjemaet er hovedveien/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/du kan også ringe/i)).toHaveLength(3);
+    expect(
+      screen.getAllByRole("link", { name: /\+47 986 41 443/i })[0],
+    ).toHaveAttribute("href", "tel:+4798641443");
+    expect(
+      screen.queryByText(/eneste offentlige kontaktvei/i),
+    ).not.toBeInTheDocument();
+  });
+
+  it("places the secondary phone path after the form on public form pages", () => {
+    for (const page of [
+      publicPages.senja,
+      publicPages.finnsnes,
+      publicPages.innvendigMaling,
+      publicPages.utvendigMaling,
+      publicPages.mobelmaling,
+      publicPages.kontakt,
+    ]) {
+      const { unmount } = render(
+        <PublicPage leadAction={leadAction} page={page} />,
+      );
+
+      const submitButton = screen.getByRole("button", {
+        name: /send forespørsel/i,
+      });
+      const phoneLinks = screen.getAllByRole("link", {
+        name: /\+47 986 41 443/i,
+      });
+      const phoneLinkAfterForm = phoneLinks[phoneLinks.length - 1];
+
+      expect(
+        submitButton.compareDocumentPosition(phoneLinkAfterForm) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy();
+
+      unmount();
+    }
+  });
+
+  it("renders a verified page image on each launch service page", () => {
+    const servicePages = [
+      {
+        page: publicPages.innvendigMaling,
+        image: /lys entré og trapp med malte hvite vegger/i,
+        src: "interior.jpg",
+      },
+      {
+        page: publicPages.utvendigMaling,
+        image: /moderne enebolig med lys malt fasade/i,
+        src: "exterior.jpg",
+      },
+      {
+        page: publicPages.mobelmaling,
+        image: /hvitmalt innebygd reol og skapinnredning/i,
+        src: "furniture.jpg",
+      },
+    ];
+
+    for (const { page, image, src } of servicePages) {
+      const { unmount } = render(
+        <PublicPage leadAction={leadAction} page={page} />,
+      );
+
+      expect(screen.getByRole("img", { name: image })).toHaveAttribute(
+        "src",
+        expect.stringContaining(src),
+      );
+
+      unmount();
     }
   });
 });
