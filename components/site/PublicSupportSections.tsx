@@ -17,12 +17,12 @@ const cityPages = [
 export function RequestProcess() {
   return (
     <section aria-labelledby="request-process-heading">
-      <p
+      <h2
         className="text-sm font-semibold uppercase tracking-[0.18em] text-neutral-600"
         id="request-process-heading"
       >
         Slik fungerer forespørselen
-      </p>
+      </h2>
       <div className="mt-5 grid gap-4">
         {requestProcessSteps.map((step) => (
           <article

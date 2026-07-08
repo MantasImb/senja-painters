@@ -161,6 +161,12 @@ describe("PublicPage", () => {
       );
 
       expect(
+        screen.getByRole("heading", {
+          level: 2,
+          name: /slik fungerer forespørselen/i,
+        }),
+      ).toBeInTheDocument();
+      expect(
         screen.getAllByRole("heading", { name: /send forespørsel/i }).length,
       ).toBeGreaterThan(0);
       expect(
