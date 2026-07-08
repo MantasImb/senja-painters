@@ -10,10 +10,10 @@ This plan turns the content and local SEO decisions for Senja Malere into an imp
 - Launch service areas: Senja and Finnsnes only.
 - Future service-area expansion is expected, but new location pages require distinct useful content.
 - Launch audience: private residential homeowners, not commercial or property-management customers.
-- Preferred intake path: lead form.
-- Secondary contact path: public phone number.
+- Preferred customer intake path: lead form.
+- Secondary contact path: verified public phone number.
 - Public email is not part of launch.
-- Public contact hours: Monday-Sunday 08:00-22:00, described as contact availability, not walk-in hours.
+- Verified public contact hours: Monday-Sunday 08:00-22:00, described as contact availability, not walk-in hours.
 - Google Business Profile and local SEO profiles should link to the Norwegian homepage `/no`.
 - Do not publish organization number for launch.
 - Do not show reviews, ratings, testimonials, review schema, or review sections until real reviews exist.
@@ -45,9 +45,9 @@ This plan turns the content and local SEO decisions for Senja Malere into an imp
 
 Collect the exact facts needed before implementation:
 
-- Public phone number.
+- Verified public phone number.
 - Final Google Business Profile URL.
-- Confirmation that Monday-Sunday 08:00-22:00 remains correct public contact availability.
+- Verified Monday-Sunday 08:00-22:00 public contact availability.
 - Final list of launch services shown in Google Business Profile.
 - Verified photos with source notes and publication permission.
 
@@ -65,25 +65,40 @@ Facts intentionally excluded for launch:
 
 Update public content later to reflect the decided SEO model:
 
-- Keep the form as the preferred CTA.
-- Add public phone as a secondary contact option.
-- Update contact page language away from "form-only" once the phone number is ready.
-- Add a short homepage about section.
-- Add a compact request-process section: send request, clarify project, plan next steps.
-- Add minimal FAQ content only where it helps real homeowner decisions.
+- Keep the form as the primary CTA and preferred customer intake path.
+- Add the verified public phone number as a secondary contact option in the contact section and footer.
+- Introduce the phone option with language like "du kan også ringe" so it supports, but does not compete with, the form.
+- Do not add a prominent phone CTA in the header or hero for launch.
+- Update contact page language away from "form-only" without making the phone number feel like the primary funnel.
+- Add a short homepage about section framed as local painting help for homeowners, not as a founder biography or company-history section.
+- Add a compact request-process section with every public form: send request, clarify project, plan next steps.
+- Place the request process above the form on mobile and next to the form on desktop where the layout allows.
+- Add one shared minimal FAQ block on the homepage and contact page only.
 - Keep pages focused on private homeowners and residential painting work.
 - Keep Senja and Finnsnes as the only launch location pages.
 - Keep nearby city expansion out of launch pages until distinct local content exists.
 - Do not add a service-area map for launch; use text and navigation for Senja and Finnsnes.
 
-Suggested minimal FAQ topics:
+These are content rules, not architectural decisions. Keep them in this plan and domain context rather than creating an ADR; Phase 3 copy is expected to stay fluid and may be adjusted repeatedly before final launch.
+
+Launch FAQ topics:
 
 - Which areas Senja Malere serves.
 - What kinds of painting projects homeowners can send in.
 - Whether smaller projects like doors, cabinets, kitchen fronts, built-ins, or furniture are relevant.
 - What happens after a request is submitted.
 
-Avoid FAQ topics that are only form mechanics, such as whether email is required.
+Keep the launch FAQ to these four questions. It may expand later when there is a clear homeowner-facing reason.
+
+The service-area FAQ answer should name Senja and Finnsnes only. Do not mention nearby deferred locations as "you can ask" areas until they become real launch service areas with distinct useful content.
+
+The smaller-project FAQ answer may mention doors, cabinets, kitchen fronts, built-ins, and furniture as examples under the existing møbelmaling/detail-work service group. Do not turn these examples into separate launch service pages.
+
+Do not mention photos in the shared FAQ unless there is a clear homeowner-facing reason later.
+
+Do not use the shared FAQ for phone number or contact-hours content; show those facts near the form and in the footer instead.
+
+Avoid FAQ topics that are only form mechanics, such as whether email is required. Do not repeat the full FAQ on service or location pages; keep those pages focused on their specific service or area intent.
 
 ## Phase 4: Service Content
 
@@ -102,10 +117,11 @@ Use `docs/seo-photo-brief.md` as the source brief.
 Implementation direction:
 
 1. Treat images kept on the website after photo finalization as verified publishable assets, not placeholders.
-2. Use verified project photos that are safe to publish.
-3. Do not imply an image shows Senja Malere work unless that is true and verified.
-4. Do not add before-and-after claims unless the image pair is real, same-project, and clearly comparable.
-5. Add a work examples section only after 4-6 strong verified photos are available.
+2. Use verified project photos that are safe to publish, including one suitable provided photo for each launch service page when available.
+3. Do not create a separate category for generic publishable service illustrations; service-page imagery should belong to the same verified-photo set.
+4. Do not imply an image shows more than the verified source notes support.
+5. Do not add before-and-after claims unless the image pair is real, same-project, and clearly comparable.
+6. Add a work examples section only after 4-6 strong verified photos are available.
 
 ## Phase 6: Structured Data And Metadata
 

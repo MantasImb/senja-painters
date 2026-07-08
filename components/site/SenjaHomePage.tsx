@@ -3,20 +3,20 @@ import Link from "next/link";
 
 import { LeadForm, type LeadFormAction } from "@/components/forms/LeadForm";
 import { PageViewBeacon } from "@/components/site/PageViewBeacon";
+import {
+  LaunchFaq,
+  RequestProcess,
+  SecondaryContact,
+  SiteFooter,
+} from "@/components/site/PublicSupportSections";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   publicHomePage,
-  publicPages,
   type PublicHomePageContent,
 } from "@/lib/content/public-pages";
-
-const cityPages = [
-  { name: publicPages.senja.title, href: publicPages.senja.pathname },
-  { name: publicPages.finnsnes.title, href: publicPages.finnsnes.pathname },
-];
 
 export function SenjaHomePage({
   leadAction,
@@ -29,8 +29,10 @@ export function SenjaHomePage({
       <SiteHeader overlay />
       <Hero />
       <Services />
+      <About />
       <ContactSection leadAction={leadAction} />
-      <SeoFooter />
+      <LaunchFaq />
+      <SiteFooter />
     </main>
   );
 }
@@ -85,14 +87,26 @@ function Services() {
   );
 }
 
+function About() {
+  return (
+    <section className="border-y border-neutral-300 bg-white">
+      <div className="mx-auto max-w-7xl px-5 py-20 sm:px-8">
+        <SectionIntro {...publicHomePage.about} />
+      </div>
+    </section>
+  );
+}
+
 function ContactSection({ leadAction }: { leadAction: LeadFormAction }) {
   const { contact } = publicHomePage;
 
   return (
     <section id="foresporsel" className="mx-auto max-w-7xl px-5 py-24 sm:px-8">
-      <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-        <div className="max-w-xl pt-2">
+      <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+        <div className="grid max-w-xl gap-8 pt-2">
           <SectionIntro {...contact} />
+          <RequestProcess />
+          <SecondaryContact inverse={false} />
         </div>
         <LeadForm
           action={leadAction}
@@ -101,70 +115,6 @@ function ContactSection({ leadAction }: { leadAction: LeadFormAction }) {
         />
       </div>
     </section>
-  );
-}
-
-function SeoFooter() {
-  return (
-    <footer className="border-t border-neutral-300 bg-neutral-950 text-white">
-      <div className="mx-auto grid max-w-7xl gap-12 px-5 py-16 sm:px-8 lg:grid-cols-[1.1fr_0.9fr_0.9fr]">
-        <div>
-          <p className="text-3xl font-semibold">Senja Malere</p>
-          <p className="mt-5 max-w-md leading-7 text-white/70">
-            {publicHomePage.footerText}
-          </p>
-        </div>
-        <FooterLinkColumn title="Områder" links={cityPages} inverse />
-        <FooterLinkColumn
-          title="Tjenester"
-          links={[
-            ...publicHomePage.services.map((service) => ({
-              name: service.title,
-              href: service.pathname,
-            })),
-          ]}
-          inverse
-        />
-      </div>
-    </footer>
-  );
-}
-
-function FooterLinkColumn({
-  title,
-  links,
-  inverse = false,
-}: {
-  title: string;
-  links: { name: string; href: string }[];
-  inverse?: boolean;
-}) {
-  return (
-    <nav aria-label={title}>
-      <p
-        className={[
-          "text-sm font-semibold uppercase tracking-[0.16em]",
-          inverse ? "text-white/55" : "text-neutral-500",
-        ].join(" ")}
-      >
-        {title}
-      </p>
-      <div className="mt-5 grid gap-3">
-        {links.map((link) => (
-          <Button
-            asChild
-            key={link.href}
-            variant={inverse ? "siteLinkInverse" : "siteLink"}
-          >
-            {link.href.startsWith("/") ? (
-              <Link href={link.href}>{link.name}</Link>
-            ) : (
-              <a href={link.href}>{link.name}</a>
-            )}
-          </Button>
-        ))}
-      </div>
-    </nav>
   );
 }
 
