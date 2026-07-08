@@ -19,7 +19,6 @@ export function PublicPage({
   page: PublicPageContent;
 }) {
   const showForm = page.type !== "privacy";
-  const deferPhoneUntilAfterForm = page.type !== "privacy";
 
   return (
     <main className="min-h-screen bg-neutral-100 text-neutral-950">
@@ -45,6 +44,7 @@ export function PublicPage({
                   alt={page.image.alt}
                   className="object-cover"
                   fill
+                  preload
                   sizes="(min-width: 1024px) 48vw, 100vw"
                   src={page.image.src}
                 />
@@ -68,7 +68,7 @@ export function PublicPage({
           ))}
           {showForm ? <RequestProcess /> : null}
           {showForm ? (
-            <div className={deferPhoneUntilAfterForm ? "hidden lg:block" : ""}>
+            <div className="hidden lg:block">
               <SecondaryContact inverse={false} />
             </div>
           ) : null}
@@ -80,11 +80,9 @@ export function PublicPage({
               sourcePage={page.pathname}
               title={page.formTitle ?? "Start forespørselen"}
             />
-            {deferPhoneUntilAfterForm ? (
-              <div className="lg:hidden">
-                <SecondaryContact inverse={false} />
-              </div>
-            ) : null}
+            <div className="lg:hidden">
+              <SecondaryContact inverse={false} />
+            </div>
           </div>
         ) : null}
       </section>

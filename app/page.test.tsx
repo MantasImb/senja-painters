@@ -107,7 +107,19 @@ describe("Home", () => {
       "href",
       "#foresporsel",
     );
-    expect(screen.getByRole("button", { name: /send forespørsel/i })).toBeInTheDocument();
+    const submitButton = screen.getByRole("button", {
+      name: /send forespørsel/i,
+    });
+    const processHeading = screen.getByRole("heading", {
+      level: 2,
+      name: /slik fungerer forespørselen/i,
+    });
+
+    expect(submitButton).toBeInTheDocument();
+    expect(
+      submitButton.compareDocumentPosition(processHeading) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
     expect(screen.getAllByText(/du kan også ringe/i)).toHaveLength(2);
     expect(
       screen.getAllByRole("link", { name: /\+47 986 41 443/i })[0],

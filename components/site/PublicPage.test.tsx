@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 
 import { PublicPage } from "@/components/site/PublicPage";
 import type { LeadFormAction } from "@/components/forms/LeadForm";
-import { publicPages } from "@/lib/content/public-pages";
+import { publicHomePage, publicPages } from "@/lib/content/public-pages";
 
 const leadAction: LeadFormAction = async () => ({
   ok: false,
@@ -259,6 +259,14 @@ describe("PublicPage", () => {
       const { unmount } = render(
         <PublicPage leadAction={leadAction} page={page} />,
       );
+      const homeService = publicHomePage.services.find(
+        (service) => service.pathname === page.pathname,
+      );
+
+      expect(page.image).toEqual({
+        alt: homeService?.imageAlt,
+        src: homeService?.image,
+      });
 
       expect(screen.getByRole("img", { name: image })).toHaveAttribute(
         "src",
