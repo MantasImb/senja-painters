@@ -179,7 +179,9 @@ function FooterLinkColumn({
             {link.href.startsWith("/") ? (
               <Link href={link.href}>{link.name}</Link>
             ) : (
-              <a href={link.href}>{link.name}</a>
+              <a href={link.href} rel="noopener noreferrer" target="_blank">
+                {link.name}
+              </a>
             )}
           </Button>
         ))}

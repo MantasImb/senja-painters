@@ -74,6 +74,21 @@ export type PublicPageContent = {
   type: "location" | "service" | "contact" | "privacy";
 };
 
+const serviceImages = {
+  innvendigMaling: {
+    alt: "Lys entré og trapp med malte hvite vegger",
+    src: "/interior.jpg",
+  },
+  mobelmaling: {
+    alt: "Hvitmalt innebygd reol og skapinnredning",
+    src: "/furniture.jpg",
+  },
+  utvendigMaling: {
+    alt: "Moderne enebolig med lys malt fasade",
+    src: "/exterior.jpg",
+  },
+} satisfies Record<string, NonNullable<PublicPageContent["image"]>>;
+
 export const publicContactInfo = {
   hours: "Mandag-søndag 08:00-22:00",
   phoneDisplay: "+47 986 41 443",
@@ -150,22 +165,22 @@ export const publicHomePage = {
   },
   services: [
     {
-      image: "/interior.jpg",
-      imageAlt: "Lys entré og trapp med malte hvite vegger",
+      image: serviceImages.innvendigMaling.src,
+      imageAlt: serviceImages.innvendigMaling.alt,
       pathname: "/no/innvendig-maling",
       text: "Vegger, tak, listverk og rom som trenger en ryddig overflate og et pent sluttresultat.",
       title: "Innvendig maling",
     },
     {
-      image: "/exterior.jpg",
-      imageAlt: "Moderne enebolig med lys malt fasade",
+      image: serviceImages.utvendigMaling.src,
+      imageAlt: serviceImages.utvendigMaling.alt,
       pathname: "/no/utvendig-maling",
       text: "Fasader, kledning og detaljer der underlag, vær og forarbeid må vurderes før jobben planlegges.",
       title: "Utvendig maling",
     },
     {
-      image: "/furniture.jpg",
-      imageAlt: "Hvitmalt innebygd reol og skapinnredning",
+      image: serviceImages.mobelmaling.src,
+      imageAlt: serviceImages.mobelmaling.alt,
       pathname: "/no/mobelmaling",
       text: "Maling av møbler, skap, dører og detaljer som trenger nytt uttrykk eller bedre finish.",
       title: "Møbler og detaljer",
@@ -208,10 +223,7 @@ export const publicPages = {
   innvendigMaling: {
     eyebrow: "Tjeneste",
     formTitle: "Beskriv innvendig maling",
-    image: {
-      alt: "Lys entré og trapp med malte hvite vegger",
-      src: "/interior.jpg",
-    },
+    image: serviceImages.innvendigMaling,
     intro:
       "Innvendig maling dekker vegger, tak og listverk i hjem som trenger nye overflater, bedre finish eller en roligere helhet.",
     pathname: "/no/innvendig-maling",
@@ -264,10 +276,7 @@ export const publicPages = {
   mobelmaling: {
     eyebrow: "Tjeneste",
     formTitle: "Beskriv møbelmalingen",
-    image: {
-      alt: "Hvitmalt innebygd reol og skapinnredning",
-      src: "/furniture.jpg",
-    },
+    image: serviceImages.mobelmaling,
     intro:
       "Møbelmaling er for møbler, skap og detaljer som trenger ny finish, nytt uttrykk eller en mer helhetlig plass i hjemmet.",
     pathname: "/no/mobelmaling",
@@ -349,10 +358,7 @@ export const publicPages = {
   utvendigMaling: {
     eyebrow: "Tjeneste",
     formTitle: "Beskriv utvendig maling",
-    image: {
-      alt: "Moderne enebolig med lys malt fasade",
-      src: "/exterior.jpg",
-    },
+    image: serviceImages.utvendigMaling,
     intro:
       "Utvendig maling handler om fasade, kledning og detaljer der vær og kledning må vurderes før arbeid og tidspunkt planlegges.",
     pathname: "/no/utvendig-maling",

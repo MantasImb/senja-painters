@@ -102,17 +102,19 @@ function ContactSection({ leadAction }: { leadAction: LeadFormAction }) {
 
   return (
     <section id="foresporsel" className="mx-auto max-w-7xl px-5 py-24 sm:px-8">
-      <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-        <div className="grid max-w-xl gap-8 pt-2">
+      <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-x-12">
+        <div className="lg:col-start-2 lg:row-start-1">
+          <LeadForm
+            action={leadAction}
+            sourcePage="/no"
+            title="Start forespørselen"
+          />
+        </div>
+        <div className="grid max-w-xl gap-8 pt-2 lg:col-start-1 lg:row-start-1">
           <SectionIntro {...contact} />
           <RequestProcess />
           <SecondaryContact inverse={false} />
         </div>
-        <LeadForm
-          action={leadAction}
-          sourcePage="/no"
-          title="Start forespørselen"
-        />
       </div>
     </section>
   );
