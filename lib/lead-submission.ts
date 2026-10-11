@@ -87,7 +87,7 @@ const submissionSchema = z.object({
     .transform((value) => value ?? ""),
   area: z.string().trim().min(1, "Område/by er påkrevd."),
   serviceType: z.enum(
-    ["Innvendig maling", "Utvendig maling", "Møbler og detaljer"],
+    ["Innvendig maling", "Utvendig maling", "Møbelmaling"],
     "Velg en tjeneste.",
   ),
   propertyType: z.string().trim().optional().default(""),

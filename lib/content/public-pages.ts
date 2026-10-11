@@ -183,7 +183,7 @@ export const publicHomePage = {
       imageAlt: serviceImages.mobelmaling.alt,
       pathname: "/no/mobelmaling",
       text: "Maling av møbler, skap, dører og detaljer som trenger nytt uttrykk eller bedre finish.",
-      title: "Møbler og detaljer",
+      title: "Møbelmaling",
     },
   ],
   servicesIntro: {
@@ -225,16 +225,20 @@ export const publicPages = {
     formTitle: "Beskriv innvendig maling",
     image: serviceImages.innvendigMaling,
     intro:
-      "Innvendig maling dekker vegger, tak og listverk i hjem som trenger nye overflater, bedre finish eller en roligere helhet.",
+      "Innvendig maling dekker vegger, tak, listverk og rom i hjem som trenger nye overflater, bedre finish eller en roligere helhet. Før arbeidet planlegges bør romtype, underlag, bruk av boligen og ønsket uttrykk avklares.",
     pathname: "/no/innvendig-maling",
     sections: [
       {
         title: "Ryddig avklaring før rommet males",
-        text: "Vegger, tak og listverk kan kreve ulikt forarbeid. Skjemaet ber derfor om rom, underlag, omfang og ønsket tidspunkt før Senja Malere vurderer neste steg.",
+        text: "Vegger, tak og listverk kan kreve ulikt forarbeid. Skjemaet ber derfor om rom, underlag, omfang og ønsket tidspunkt før Senja Malere vurderer hva som bør avklares videre.",
       },
       {
         title: "For oppholdsrom, soverom og gangsoner",
-        text: "Innvendig arbeid handler både om uttrykk og praktisk gjennomføring i et hjem som ofte er i bruk. Derfor er en enkel første avklaring viktig.",
+        text: "Innvendig arbeid handler både om uttrykk og praktisk gjennomføring i et hjem som ofte er i bruk. Beskriv gjerne om rommet er møblert, om det er høye flater, og om det finnes skader, merker eller tidligere maling som bør vurderes.",
+      },
+      {
+        title: "Overflater, farger og praktiske hensyn",
+        text: "En god forespørsel kan nevne om vegger, tak, karmer eller lister skal males, og om fargevalg allerede er bestemt. Det gjør det enklere å snakke om rekkefølge, tilgang og hva som må være klart før arbeidet kan planlegges.",
       },
     ],
     seo: {
@@ -278,16 +282,20 @@ export const publicPages = {
     formTitle: "Beskriv møbelmalingen",
     image: serviceImages.mobelmaling,
     intro:
-      "Møbelmaling er for møbler, skap og detaljer som trenger ny finish, nytt uttrykk eller en mer helhetlig plass i hjemmet.",
+      "Møbelmaling er for møbler, skap, dører, kjøkkenfronter, innebygde løsninger og detaljer som trenger ny finish eller et nytt uttrykk. Slike prosjekter bør beskrives tydelig fordi materialer, bruksslitasje og håndtering kan variere mye.",
     pathname: "/no/mobelmaling",
     sections: [
       {
         title: "Detaljer fortjener en egen vurdering",
-        text: "Møbler, skap og detaljer har ofte andre krav til håndtering, overflate og finish enn vegger og fasader. Forespørselen bør derfor beskrive materialet og ønsket uttrykk.",
+        text: "Dører, skap, kjøkkenfronter, innebygde løsninger og møbler har ofte andre krav til håndtering, overflate og finish enn vegger og fasader. Forespørselen bør derfor beskrive materialet, størrelsen og ønsket uttrykk.",
       },
       {
-        title: "Ingen før- og etterpå-løfter uten ekte prosjektgrunnlag",
-        text: "V1 bruker ikke uekte prosjektbilder eller før- og etterpå-påstander. Siden er laget slik at ekte bilder kan legges inn senere når Senja Malere har egne prosjekter å vise.",
+        title: "Små flater kan kreve presis planlegging",
+        text: "Detaljarbeid bør avklares med størrelse, bruksslitasje, dagens behandling og om delen kan flyttes eller må males der den står. Det er også nyttig å vite om overflaten har lakk, beis, maling eller ukjent behandling fra før.",
+      },
+      {
+        title: "Når detaljene skal passe resten av hjemmet",
+        text: "Møbelmaling kan handle om å friske opp én detalj eller få skap, dører og innredning til å henge bedre sammen med rommet rundt. Send gjerne inn hva delen brukes til, hvor den står, og om den skal ha et diskret eller tydeligere uttrykk.",
       },
     ],
     seo: {
@@ -360,16 +368,20 @@ export const publicPages = {
     formTitle: "Beskriv utvendig maling",
     image: serviceImages.utvendigMaling,
     intro:
-      "Utvendig maling handler om fasade, kledning og detaljer der vær og kledning må vurderes før arbeid og tidspunkt planlegges.",
+      "Utvendig maling handler om fasade, kledning, vindusdetaljer, staffasje og andre værutsatte flater der underlag, adkomst og sesong må vurderes før arbeid og tidspunkt planlegges.",
     pathname: "/no/utvendig-maling",
     sections: [
       {
         title: "Forarbeid og vær betyr mye",
-        text: "På Senja og i Finnsnes må utvendig arbeid planlegges med hensyn til vær, underlag og tilgjengelighet. Forespørselen hjelper Senja Malere å forstå hva som bør vurderes først.",
+        text: "På Senja og i Finnsnes må utvendig arbeid planlegges med hensyn til vær, underlag og tilgjengelighet. Forespørselen hjelper Senja Malere å forstå hva som bør vurderes før videre avklaring.",
       },
       {
         title: "Fasade, kledning og detaljer",
-        text: "Utvendig maling kan gjelde hele flater eller mindre detaljer. Beskriv gjerne hva som skal males, om det finnes slitasje, og hvor enkelt det er å komme til.",
+        text: "Utvendig maling kan gjelde hele flater eller mindre detaljer. Beskriv gjerne hva som skal males, om det finnes flassing, slitasje eller fuktutsatte områder, og hvor enkelt det er å komme til.",
+      },
+      {
+        title: "Nyttig informasjon før neste steg",
+        text: "Det hjelper å vite om boligen er malt eller beiset tidligere, omtrent når arbeidet sist ble gjort, og om det trengs stige, stillas eller annen tilgang. Slik kan samtalen starte med riktige praktiske avklaringer.",
       },
     ],
     seo: {

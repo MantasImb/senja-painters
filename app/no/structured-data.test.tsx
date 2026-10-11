@@ -37,7 +37,27 @@ describe("public structured data", () => {
       "@type": "LocalBusiness",
       name: "Senja Malere",
       url: "https://senjamalere.no/no",
+      telephone: "+47 986 41 443",
       areaServed: [{ name: "Senja" }, { name: "Finnsnes" }],
+      contactPoint: {
+        "@type": "ContactPoint",
+        contactType: "customer service",
+        telephone: "+47 986 41 443",
+        hoursAvailable: {
+          "@type": "OpeningHoursSpecification",
+          dayOfWeek: [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+            "Sunday",
+          ],
+          opens: "08:00",
+          closes: "22:00",
+        },
+      },
       makesOffer: [
         { itemOffered: { name: "Innvendig maling" } },
         { itemOffered: { name: "Utvendig maling" } },
@@ -47,7 +67,6 @@ describe("public structured data", () => {
 
     for (const unsupportedClaim of [
       "address",
-      "telephone",
       "email",
       "openingHours",
       "openingHoursSpecification",

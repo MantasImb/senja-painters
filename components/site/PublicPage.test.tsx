@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { PublicPage } from "@/components/site/PublicPage";
@@ -49,13 +49,13 @@ describe("PublicPage", () => {
       {
         page: publicPages.utvendigMaling,
         heading: /utvendig maling/i,
-        text: /vær og kledning/i,
+        text: /værutsatte flater/i,
         hasForm: true,
       },
       {
         page: publicPages.mobelmaling,
         heading: /møbelmaling/i,
-        text: /møbler, skap og detaljer/i,
+        text: /dører, skap, kjøkkenfronter/i,
         hasForm: true,
       },
       {
@@ -97,6 +97,107 @@ describe("PublicPage", () => {
 
       unmount();
     }
+  });
+
+  it("keeps smaller detail projects under the furniture painting service without implementation copy", () => {
+    render(
+      <PublicPage leadAction={leadAction} page={publicPages.mobelmaling} />,
+    );
+
+    expect(
+      screen.getByText(
+        /dører, skap, kjøkkenfronter, innebygde løsninger og møbler/i,
+      ),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/v1/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/uekte prosjektbilder/i)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/før- og etterpå-påstander/i),
+    ).not.toBeInTheDocument();
+  });
+
+  it("keeps the service page title and intro together before the page image", () => {
+    render(
+      <PublicPage
+        leadAction={leadAction}
+        page={publicPages.innvendigMaling}
+      />,
+    );
+
+    const heading = screen.getByRole("heading", {
+      level: 1,
+      name: /innvendig maling/i,
+    });
+    const intro = screen.getByText(/romtype, underlag, bruk av boligen/i);
+    const image = screen.getByRole("img", {
+      name: /lys entré og trapp med malte hvite vegger/i,
+    });
+
+    expect(
+      heading.compareDocumentPosition(intro) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      intro.compareDocumentPosition(image) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(heading.parentElement).toBe(intro.parentElement);
+  });
+
+  it("places page-specific content above the request process and form section", () => {
+    render(
+      <PublicPage
+        leadAction={leadAction}
+        page={publicPages.utvendigMaling}
+      />,
+    );
+
+    const finalPageSection = screen.getByRole("heading", {
+      level: 2,
+      name: /nyttig informasjon før neste steg/i,
+    });
+    const requestProcess = screen.getByRole("heading", {
+      level: 2,
+      name: /slik fungerer forespørselen/i,
+    });
+    const formTitle = screen.getByRole("heading", {
+      level: 2,
+      name: /beskriv utvendig maling/i,
+    });
+    const pageContent = screen.getByRole("region", {
+      name: /sideinnhold/i,
+    });
+    const requestSection = screen.getByRole("region", {
+      name: "Forespørsel",
+    });
+
+    expect(
+      finalPageSection.compareDocumentPosition(requestProcess) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      finalPageSection.compareDocumentPosition(formTitle) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      within(pageContent).getByRole("heading", {
+        name: /nyttig informasjon før neste steg/i,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      within(pageContent).queryByRole("heading", {
+        name: /slik fungerer forespørselen/i,
+      }),
+    ).not.toBeInTheDocument();
+    expect(
+      within(requestSection).getByRole("heading", {
+        name: /slik fungerer forespørselen/i,
+      }),
+    ).toBeInTheDocument();
+    expect(
+      within(requestSection).queryByRole("heading", {
+        name: /nyttig informasjon før neste steg/i,
+      }),
+    ).not.toBeInTheDocument();
   });
 
   it("submits each major page with the correct source page", async () => {

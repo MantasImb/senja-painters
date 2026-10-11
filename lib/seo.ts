@@ -10,6 +10,13 @@ export type PageSeo = {
   title: string;
 };
 
+const defaultOpenGraphImage = {
+  alt: "Moderne enebolig med lys fasade i skumringen",
+  height: 960,
+  pathname: "/hero.jpg",
+  width: 1440,
+};
+
 export function absoluteUrl(pathname: string): string {
   return new URL(pathname, publicEnv.NEXT_PUBLIC_SITE_URL).toString();
 }
@@ -33,6 +40,14 @@ export function buildPageMetadata({
       title: seo.title,
       description: seo.openGraphDescription,
       url,
+      images: [
+        {
+          url: absoluteUrl(defaultOpenGraphImage.pathname),
+          width: defaultOpenGraphImage.width,
+          height: defaultOpenGraphImage.height,
+          alt: defaultOpenGraphImage.alt,
+        },
+      ],
       locale: "nb_NO",
       siteName: "Senja Malere",
       type: "website",

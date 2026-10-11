@@ -63,7 +63,9 @@ Facts intentionally excluded for launch:
 
 ## Phase 3: Website Content Updates
 
-Update public content later to reflect the decided SEO model:
+Status: completed in the current content pass. Keep this section as the source of truth for what was implemented and for future copy reviews.
+
+The completed public content pass should continue to satisfy the decided SEO model:
 
 - Keep the form as the primary CTA and preferred customer intake path.
 - Add the verified public phone number as a secondary contact option in the contact section and footer.
@@ -100,7 +102,11 @@ Do not use the shared FAQ for phone number or contact-hours content; show those 
 
 Avoid FAQ topics that are only form mechanics, such as whether email is required. Do not repeat the full FAQ on service or location pages; keep those pages focused on their specific service or area intent.
 
-## Phase 4: Service Content
+## Phase 4: Service Content Audit
+
+Goal: verify that the three launch service pages are useful, distinct, and still aligned with the launch SEO model after the Phase 3 copy changes.
+
+Requirements:
 
 Preserve the three launch service groups:
 
@@ -108,13 +114,31 @@ Preserve the three launch service groups:
 - Utvendig maling: exterior walls, facades, trim, staining, wood treatment, and other weather-exposed surfaces.
 - Møbelmaling: furniture, cabinets, kitchen fronts, doors, built-ins, and detail surfaces.
 
-Do not split these into more service pages until there is enough distinct content and demand to avoid thin pages.
+Acceptance checks:
+
+- `/no/innvendig-maling`, `/no/utvendig-maling`, and `/no/mobelmaling` are the only launch service pages.
+- Each service page has a distinct title, intro, metadata title, metadata description, and at least two body sections.
+- Each service page explains what should be clarified before the project proceeds, without promising price, response time, free quote, guarantee, certification, or years in business.
+- Service-page copy stays focused on private residential homeowners and does not target commercial or property-management customers.
+- Small project examples such as doors, cabinets, kitchen fronts, built-ins, and furniture remain under the møbelmaling/detail-work service group.
+- No additional service pages are created until there is enough distinct content and demand to avoid thin pages.
+- Service cards and navigation link only to the three approved service routes.
+- Tests or content assertions cover the three approved service routes and guard against accidental launch-service expansion.
+
+Implementation output:
+
+- A focused content audit PR if the current service pages need copy, metadata, or navigation corrections.
+- Otherwise, a short launch-readiness note confirming that Phase 4 has no code changes because the service content already meets the acceptance checks.
 
 ## Phase 5: Photo Handling
 
 Use `docs/seo-photo-brief.md` as the source brief.
 
-Implementation direction:
+Prerequisite:
+
+- A verified photo inventory exists with source notes, publication permission, and a short description of what each image actually shows.
+
+Requirements:
 
 1. Treat images kept on the website after photo finalization as verified publishable assets, not placeholders.
 2. Use verified project photos that are safe to publish, including one suitable provided photo for each launch service page when available.
@@ -123,21 +147,69 @@ Implementation direction:
 5. Do not add before-and-after claims unless the image pair is real, same-project, and clearly comparable.
 6. Add a work examples section only after 4-6 strong verified photos are available.
 
+Acceptance checks:
+
+- Every public image that remains after photo finalization has a verified source note and clear publication permission.
+- Homepage hero image and service-page images either use verified publishable photos or are explicitly deferred without adding unsupported project claims.
+- Image alt text describes the actual visible image naturally and does not stuff location or service keywords.
+- Captions, surrounding copy, metadata, and structured data do not imply that decorative or unverified photos are Senja Malere project evidence.
+- Before-and-after language is absent unless there is a real same-project comparable pair.
+- Work examples are absent unless at least 4-6 strong verified project photos are ready.
+
+Implementation output:
+
+- Replace or confirm the homepage and service-page image assets.
+- Update alt text and any image-adjacent copy to match the verified source notes.
+- Add a compact work examples section only if the photo threshold is met; otherwise keep it deferred.
+
 ## Phase 6: Structured Data And Metadata
 
-After verified facts are available:
+Goal: make machine-readable SEO data match only the verified facts already visible on the site.
 
-- Add public phone to visible page content before adding it to structured data.
-- Add public contact hours to visible page content before adding them to structured data.
-- Keep Open Graph image handling simple: use one verified branded or homepage image if ready; otherwise keep the existing metadata and defer custom social preview work.
-- Keep LocalBusiness schema restrained and consistent with visible website facts.
-- Keep service-area framing; do not add a customer-visit address.
-- Do not add FAQ structured data for launch; keep FAQ content visible only.
-- Do not add breadcrumb navigation or breadcrumb structured data for launch; the site is shallow.
-- Do not add review, aggregateRating, certification, organization number, or founding-date structured data for launch.
-- Keep canonical URLs and sitemap entries aligned with existing `/no` public routes.
+Prerequisites:
+
+- Verified public phone number.
+- Verified public contact availability.
+- Final Google Business Profile URL if it will be referenced.
+- Final homepage or branded Open Graph image if a custom social preview image will be added.
+
+Requirements:
+
+1. Add public phone to visible page content before adding it to structured data.
+2. Add public contact hours to visible page content before adding them to structured data.
+3. Keep Open Graph image handling simple: use one verified branded or homepage image if ready; otherwise keep the existing metadata and defer custom social preview work.
+4. Keep LocalBusiness schema restrained and consistent with visible website facts.
+5. Keep service-area framing; do not add a customer-visit address.
+6. Do not add FAQ structured data for launch; keep FAQ content visible only.
+7. Do not add breadcrumb navigation or breadcrumb structured data for launch; the site is shallow.
+8. Do not add review, aggregateRating, certification, organization number, or founding-date structured data for launch.
+9. Keep canonical URLs and sitemap entries aligned with existing `/no` public routes.
+
+Acceptance checks:
+
+- Visible content, structured data, metadata, sitemap, robots, and Google Business Profile facts agree on business name, website URL, phone number, contact availability, and service areas.
+- LocalBusiness structured data includes only verified visible facts and service-area business framing.
+- Structured data does not include address, public email, organization number, founding date, reviews, aggregate rating, certifications, guarantees, or unsupported claims.
+- Canonical URLs point to the intended `/no` routes.
+- Sitemap includes the launch public routes and excludes admin routes.
+- Robots allows public crawling and excludes admin routes.
+- Metadata tests cover page titles, descriptions, canonical URLs, Open Graph URLs, sitemap, robots, and structured-data exclusions.
+
+Implementation output:
+
+- Update metadata and structured-data helpers only as needed for verified facts.
+- Update tests so unsupported schema claims fail fast.
+- Defer any item whose supporting fact is not verified.
 
 ## Phase 7: Launch Validation
+
+Goal: run a final launch checklist against the live or preview site before opening indexing and relying on Google Business Profile traffic.
+
+Prerequisites:
+
+- A deployable preview or production URL.
+- DNS or URL-prefix access for Google Search Console verification.
+- Google Business Profile live or ready to publish.
 
 Before launch:
 
@@ -152,18 +224,36 @@ Before launch:
 - Confirm the public phone number and contact hours match Google Business Profile exactly.
 - Confirm no unsupported claims appear in page copy, metadata, image captions, alt text, or structured data.
 
+Launch acceptance checks:
+
+- `/` redirects to `/no`.
+- `/no`, `/no/senja`, `/no/finnsnes`, `/no/innvendig-maling`, `/no/utvendig-maling`, `/no/mobelmaling`, `/no/kontakt`, and `/no/personvern` return successful responses.
+- `/sitemap.xml`, `/robots.txt`, favicon assets, and the web app manifest return successful responses.
+- Lead form submission works from the homepage, service pages, location pages, and contact page.
+- Internal analytics records page views and successful lead submissions without making public SEO pages dynamic.
+- Static/prerender status is confirmed from the build output or deployment output where practical.
+- Search Console verification is complete and the sitemap has been submitted.
+- Google Business Profile links to `/no`.
+
 After launch:
 
 - Test structured data with Google's rich results tooling.
 - Confirm Google Business Profile links to `/no`.
 - Monitor indexing and early lead quality before expanding location pages.
 
-## Implementation Split
+Implementation output:
 
-Use two implementation PRs:
+- A completed launch checklist with exact URLs, dates, and results.
+- Follow-up issues for any failed validation item, separated from deferred SEO work.
 
-1. Business facts and local SEO: public phone, contact hours, Google Business Profile alignment, structured data, metadata, Search Console launch checklist, and consistency checks.
-2. Content and imagery: homepage about section, request process, minimal FAQ, finalized photos, alt text, and service/location copy refinements.
+## Remaining Implementation Split
+
+Use small implementation PRs or launch tasks that map to the remaining phases:
+
+1. Service content audit: confirm the three service pages meet Phase 4 acceptance checks, or make focused copy, metadata, navigation, and test corrections.
+2. Photo finalization: replace or confirm homepage and service-page imagery, update alt text, and add work examples only if the verified-photo threshold is met.
+3. Business facts and local SEO data: align visible phone, contact hours, Google Business Profile facts, structured data, metadata, sitemap, robots, and tests.
+4. Launch validation: complete Search Console setup, sitemap submission, route checks, analytics checks, lead-form checks, prerender checks, and unsupported-claim review.
 
 ## Pre-Launch Acceptance Checklist
 

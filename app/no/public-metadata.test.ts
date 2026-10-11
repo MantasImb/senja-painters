@@ -24,6 +24,14 @@ describe("public page metadata", () => {
         description:
           "Lokal malerhjelp for boliger i Finnsnes og nærområdene.",
         url: "https://senjamalere.no/no/finnsnes",
+        images: [
+          {
+            url: "https://senjamalere.no/hero.jpg",
+            width: 1440,
+            height: 960,
+            alt: "Moderne enebolig med lys fasade i skumringen",
+          },
+        ],
         locale: "nb_NO",
         siteName: "Senja Malere",
         type: "website",
@@ -80,6 +88,14 @@ describe("public page metadata", () => {
       });
       expect(route.metadata.openGraph).toMatchObject({
         url: `https://senjamalere.no${route.pathname}`,
+        images: [
+          {
+            url: "https://senjamalere.no/hero.jpg",
+            width: 1440,
+            height: 960,
+            alt: "Moderne enebolig med lys fasade i skumringen",
+          },
+        ],
         siteName: "Senja Malere",
         locale: "nb_NO",
         type: "website",
