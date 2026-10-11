@@ -40,6 +40,40 @@ describe("Home", () => {
     ).toHaveAttribute("src", expect.stringContaining("interior.jpg"));
   });
 
+  it("links only to the three approved launch service pages from service cards", () => {
+    render(
+      <SenjaHomePage
+        leadAction={async () => ({
+          ok: false,
+          message: "",
+          fieldErrors: {},
+          values: {},
+        })}
+      />,
+    );
+
+    const services = screen.getByRole("region", { name: /tjenester/i });
+    const serviceLinks = within(services).getAllByRole("link", {
+      name: /les om/i,
+    });
+
+    expect(serviceLinks).toHaveLength(3);
+    expect(serviceLinks.map((link) => link.getAttribute("href"))).toEqual([
+      "/no/innvendig-maling",
+      "/no/utvendig-maling",
+      "/no/mobelmaling",
+    ]);
+    expect(
+      within(services).getByRole("heading", { name: "Innvendig maling" }),
+    ).toBeInTheDocument();
+    expect(
+      within(services).getByRole("heading", { name: "Utvendig maling" }),
+    ).toBeInTheDocument();
+    expect(
+      within(services).getByRole("heading", { name: "Møbelmaling" }),
+    ).toBeInTheDocument();
+  });
+
   it("uses a dedicated hero outline variant for the secondary CTA", () => {
     render(
       <SenjaHomePage

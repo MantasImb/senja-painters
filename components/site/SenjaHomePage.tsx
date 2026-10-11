@@ -76,7 +76,11 @@ function Hero() {
 
 function Services() {
   return (
-    <section id="tjenester" className="mx-auto max-w-7xl px-5 py-24 sm:px-8">
+    <section
+      aria-label="Tjenester"
+      className="mx-auto max-w-7xl px-5 py-24 sm:px-8"
+      id="tjenester"
+    >
       <SectionIntro {...publicHomePage.servicesIntro} />
       <div className="mt-12 grid gap-6 lg:grid-cols-3">
         {publicHomePage.services.map((service) => (

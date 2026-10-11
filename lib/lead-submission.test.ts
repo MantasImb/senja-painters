@@ -119,6 +119,27 @@ describe("createLeadSubmission", () => {
     ]);
   });
 
+  it("accepts the approved furniture painting service label", async () => {
+    const repository = createRepository();
+
+    const result = await createLeadSubmission(
+      validSubmission({ serviceType: "Møbelmaling" }),
+      {
+        hashedIp: "hash_1",
+        now: new Date("2026-06-10T12:00:00.000Z"),
+        repository,
+        userAgent: "jest",
+      },
+    );
+
+    expect(result.ok).toBe(true);
+    expect(repository.leads).toEqual([
+      expect.objectContaining({
+        serviceType: "Møbelmaling",
+      }),
+    ]);
+  });
+
   it("rejects missing required fields and non-consent before persistence", async () => {
     const repository = createRepository();
 

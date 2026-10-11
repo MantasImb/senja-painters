@@ -176,6 +176,12 @@ describe("LeadForm", () => {
       "bg-background",
       "[color:var(--foreground)]",
     );
+    expect(
+      screen.getByRole("option", { name: "Møbelmaling" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("option", { name: "Møbler og detaljer" }),
+    ).not.toBeInTheDocument();
     expect(serviceSelect.parentElement).toHaveClass("[&_select]:bg-white");
     expect(serviceSelect.parentElement).toHaveClass(
       "[&_select]:text-neutral-950",

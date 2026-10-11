@@ -58,7 +58,7 @@ export type LeadFormAction = (
 const services = [
   "Innvendig maling",
   "Utvendig maling",
-  "Møbler og detaljer",
+  "Møbelmaling",
 ] as const;
 
 const propertyTypes = ["Enebolig", "Leilighet", "Hytte", "Annet"] as const;

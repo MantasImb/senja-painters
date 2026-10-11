@@ -1,4 +1,5 @@
 import { absoluteUrl } from "@/lib/seo";
+import { publicContactInfo } from "@/lib/content/public-pages";
 
 export function buildPublicJsonLd() {
   return {
@@ -16,6 +17,26 @@ export function buildPublicJsonLd() {
         "@type": "LocalBusiness",
         name: "Senja Malere",
         url: absoluteUrl("/no"),
+        telephone: publicContactInfo.phoneDisplay,
+        contactPoint: {
+          "@type": "ContactPoint",
+          contactType: "customer service",
+          telephone: publicContactInfo.phoneDisplay,
+          hoursAvailable: {
+            "@type": "OpeningHoursSpecification",
+            dayOfWeek: [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday",
+            ],
+            opens: "08:00",
+            closes: "22:00",
+          },
+        },
         areaServed: [
           {
             "@type": "Place",
